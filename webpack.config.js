@@ -1,5 +1,5 @@
 const path = require('path');
-
+const webpack = require('webpack');
 module.exports = {
     mode: "development",
     devtool: "inline-source-map",
@@ -25,4 +25,7 @@ module.exports = {
             { test: /\.css$/, use: ['style-loader', 'css-loader'] }
         ]
     },
+    plugins: [
+        
+      ],
 };

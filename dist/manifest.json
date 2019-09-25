@@ -21,13 +21,13 @@
       "persistent": true
     },
     "permissions": [
-      "https://*/*"
+      "https://*.douban.com/*","cookies","storage"
     ],
-    "content_security_policy": "default-src 'self';",
+    "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'; ",
     "content_scripts": [
       {
         "matches": [
-          "https://*/*"
+          "https://*.douban.com/*"
         ],
         "js": [
           "js/content.js"
