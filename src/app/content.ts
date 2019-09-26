@@ -27,8 +27,10 @@ async function init(){
     if (!id) {
         return;
     }
-    const data = await db.getRecord(id);
-    console.log('data is ', data);
+
+    // const myStamp = await db.getMyStamp(id);
+    // const data = await db.fetchNewest(id, myStamp);
+    // console.log('data is ', data);
     const newId = await db.updateRecord([{
         id:'153167379', tags:[], price: NaN, timestamp: Date.now(), loc: [0, 0], title: 'test'
     }], id);

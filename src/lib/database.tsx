@@ -3,7 +3,8 @@ import * as React from 'react';
 import * as cookie from 'js-cookie';
 import * as constant from './constant';
 import {logError} from './log';
-import {Modal, Input} from 'antd';
+import {Modal, Input, message} from 'antd';
+import * as LZUTF8 from 'lzutf8';
 /**
  * captcha-id: pr3TnRPoUFyOkt5CBysl4Bto:en
  * captcha-solution: drawer
@@ -14,6 +15,17 @@ import {Modal, Input} from 'antd';
  * captcha_img: "https://www.douban.com/misc/captcha?id=4Nzcxug21Lp2kZrRO0rXKOKj:en&size=s"
  * error: "请输入正确的验证码"
  */
+
+ /**
+  * 缺少数据完整性校验
+  */
+
+
+export function getUid(){
+    const txt:string = cookie.get('dbcl2');
+    const uid = txt.substr(1, txt.indexOf(':')-1);
+    return uid;    
+}
 
 function getCaptcha(data:any){
     let inputEle:HTMLInputElement;
@@ -30,7 +42,7 @@ function getCaptcha(data:any){
 }
 
 async function post(url:string, body:FormData){
-    const res = await axios.post(getPath('', 'publish'),body);
+    const res = await axios.post(url,body);
     if (res.status !== 200) {
         throw Error(url + ' : '+res.statusText);
     } 
@@ -47,10 +59,18 @@ async function post(url:string, body:FormData){
     return res;
 }
 
+async function get(url:string){
+    const res = await axios.get(url);
+    if (res.status !== 200) {
+        throw Error(url + ' : '+res.statusText);
+    } 
+    return res;
+}
+
 export interface Item{
     id: string;
     tags: string[];
-    price: number;
+    price: number|null;
     timestamp: number;
     loc: number[]|[number, number];
     title: string;
@@ -65,33 +85,51 @@ function extractData(s:string){
 function wrapData(s:string){
     return '$rent_start$'+s+'$rent_end$';
 }
+function encode(obj:any){
+    // const s = btoa(encodeURIComponent((JSON.stringify(obj))));
+    const s = LZUTF8.compress(JSON.stringify(obj), {inputEncoding:'String', outputEncoding:'Base64'});
+    return wrapData(s);
+}
+function decode(s:string){
+    const ss = LZUTF8.decompress(extractData(s), {inputEncoding:'Base64', outputEncoding:'String'});
+    // const ss = decodeURIComponent(atob(extractData(s)));
+    return JSON.parse(ss);
+}
 
-function getPath(id:string, type:'note'|'publish'){
+function getPath(id:string, type:'note'|'publish'|'peopleNotes'|'searchNotes'){
     const i = new URL('https://www.douban.com');
     if (type === 'note'){
-        i.pathname = `/note/${id}`;
+        i.pathname = `/note/${id}/`;
     }
     if (type === 'publish'){
         i.pathname = '/j/note/publish';
     }
+    if (type === 'peopleNotes'){
+        i.pathname = `/people/${id}/notes/`;
+    }
+    if (type === 'searchNotes'){
+        i.pathname = `/search`;
+        i.searchParams.set('cat','1015');
+        i.searchParams.set('q', constant.DB_NOTE_ID);
+    }
     return i.href;
 }
 export async function getRecord(id:string):Promise<Array<Item>>{
-    const res = await axios.get(getPath(id, 'note'));
+    const res = await get(getPath(id, 'note'));
     if (res.status === 200) {
-        return JSON.parse(decodeURIComponent(atob(extractData(res.data as string))));
+        return decode(res.data);
     }
     return [];
 }
 
 export async function createRecord(obj:Array<Item>){
-    const s = btoa(encodeURIComponent(JSON.stringify(obj)));
+    const s = encode(obj);
     const body = new FormData();
     const json = {
         is_rich: '0',
         note_id: '',
-        note_title: constant.DB_NOTE_ID,
-        note_text: wrapData(s),
+        note_title: constant.DB_NOTE_ID + '@' + Date.now(),
+        note_text: s,
         introduction: '',
         note_privacy: '',
         cannot_reply: '',
@@ -121,13 +159,13 @@ export async function createRecord(obj:Array<Item>){
 
 
 export async function updateRecord(obj:Array<Item>, noteId:string){
-    const s = btoa(encodeURIComponent(JSON.stringify(obj)));
+    const s = encode(obj);
     const body = new FormData();
     const json = {
         is_rich: '0',
         note_id: noteId,
-        note_title: constant.DB_NOTE_ID,
-        note_text: wrapData(s),
+        note_title: constant.DB_NOTE_ID + '@' + Date.now(),
+        note_text: s,
         introduction: '',
         note_privacy: '',
         cannot_reply: '',
@@ -151,13 +189,89 @@ export async function updateRecord(obj:Array<Item>, noteId:string){
     return '';
 }
 
+function promptNoteId(){
+    return new Promise<string>((res, rej)=>{
+        let inputEle:HTMLInputElement;
+        Modal.confirm({
+            title: '请输入已有的记录ID',
+            content: <div>
+                <p>请填入之前建立的前缀为{constant.DB_NOTE_ID}的日志ID</p>
+                <p>日志ID为日志链接地址的数字字段，如<strong>https://www.douban.com/note/735731400/</strong>中的735731400</p>
+                <p>留空或者不填则会重新新的日志记录</p>
+                <Input ref={dom=>{if(dom && dom.input){inputEle=dom.input;}}}/>
+            </div>,
+            onCancel:()=>{
+                res('')
+            },
+            onOk:()=>{
+                res(inputEle.value);
+            }
+        })
+    });
+}
+
+export async function fetchNewest(myId:string, myStamp:number){
+    const res = await get(getPath('', 'searchNotes'));
+    if (res.data) {
+        const dom = document.createElement('div');
+        dom.innerHTML = res.data;
+        const nodeLs = Array.from(dom.querySelectorAll('h3 a')).filter(el=>el.textContent.includes(constant.DB_NOTE_ID)).sort((a,b)=>a.textContent>b.textContent?1:-1);
+        const newest = nodeLs[0];
+        if (!newest){
+            return;
+        }
+        const stamp = Number(newest.textContent.substr(constant.DB_NOTE_ID.length+1));
+        // 新数据则更新
+        if (myStamp - stamp <= 1000){
+            return await getRecord(myId);
+        }
+        const href = newest.getAttribute('href').match(/note%2F(\w+)%/);
+        if (!href){
+            return;
+        }
+        const id = href[1];
+        const rec = await getRecord(id);
+        await updateRecord(rec, myId);
+        return rec;
+    }
+}
+
+export async function getMyStamp(id:string){
+    const res = await get(getPath(id, 'note'));
+    if (!res.data){
+        return 0;
+    }
+
+    const dom = document.createElement('div');
+    dom.innerHTML = res.data;
+    
+    const h1 = dom.querySelector('h1');
+    if (!h1){
+        return 0;
+    }
+    const stamp = Number(h1.textContent.substr(constant.DB_NOTE_ID.length+1));
+    return stamp;
+}
+
 export async function init(){
     let noteId = localStorage.getItem(constant.DB_NOTE_ID);
     if (noteId){
         console.log('note id is ', noteId);
         return noteId;
     }
+
+    noteId = await promptNoteId();
+    if (noteId){
+        console.log('note id is ', noteId);
+        localStorage.setItem(constant.DB_NOTE_ID, noteId);
+        return noteId;
+    }
+
     noteId = await createRecord([]);
+    if (noteId) {
+        Modal.info({title:'新建记录成功', content:'创建了前缀为'+constant.DB_NOTE_ID+'的日志用于记录数据，请勿删除'});
+    }
+
     console.log('note id is ', noteId);
     localStorage.setItem(constant.DB_NOTE_ID, noteId);
     return noteId;
