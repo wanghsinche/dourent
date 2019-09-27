@@ -9,14 +9,6 @@ chrome.runtime.sendMessage({}, (response) => {
     })
 });
 
-chrome.runtime.onMessage.addListener(async (msg)=>{
-    console.log('get message ', msg);
-    if (msg.action === 'init'){
-        try {
-            const pkg = await import('../page/init');
-            await pkg.init();
-        } catch (error) {
-            logError(error);
-        }    
-    }
-})
+if (document.title.includes('租房')&&location.href.includes('douban.com/group')) {
+    import('./app');
+}

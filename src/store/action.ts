@@ -4,6 +4,7 @@ export type ActionType =
 'global/set'
 |'global/init'
 |'global/fetchData'
+|'global/fetchMetro'
 |'global/asyncEnd'
 |'global/asyncStart';
 
@@ -25,6 +26,7 @@ export const actions = {
     set: (s:Partial<State>)=>createAction('global/set', s),
     init: ()=>createAction('global/init'),
     fetchData: ()=>createAction('global/fetchData'),
+    fetchMetro: ()=>createAction('global/fetchMetro'),
 }
 
 export type IActionFunc = typeof actions;

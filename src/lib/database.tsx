@@ -2,7 +2,6 @@ import axios from 'axios';
 import * as React from 'react';
 import * as cookie from 'js-cookie';
 import * as constant from './constant';
-import {logError} from './log';
 import {Modal, Input, message} from 'antd';
 import * as LZUTF8 from 'lzutf8';
 /**
@@ -145,12 +144,8 @@ export async function createRecord(obj:Array<Item>){
     const res = await post(getPath('', 'publish'),body);
     if (res.status === 200) {
         let id = '';
-        try {
-            const ii = res.data;
-            id = ii.url.substring(ii.url.indexOf('/note/')+6, ii.url.lastIndexOf('/'));
-        } catch (error) {
-            logError(error);
-        }
+        const ii = res.data;
+        id = ii.url.substring(ii.url.indexOf('/note/')+6, ii.url.lastIndexOf('/'));        
         return id;
     }
     return '';
