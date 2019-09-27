@@ -20,7 +20,6 @@ import * as LZUTF8 from 'lzutf8';
   * 缺少数据完整性校验
   */
 
-
 export function getUid(){
     const txt:string = cookie.get('dbcl2');
     const uid = txt.substr(1, txt.indexOf(':')-1);
@@ -221,7 +220,7 @@ export async function fetchNewest(myId:string, myStamp:number){
             return;
         }
         const stamp = Number(newest.textContent.substr(constant.DB_NOTE_ID.length+1));
-        // 新数据则更新
+        // 新数据则更新，否则用老数据
         if (myStamp - stamp <= 1000){
             return await getRecord(myId);
         }

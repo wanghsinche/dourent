@@ -1,6 +1,4 @@
-import * as db from '../lib/database';
 import {logError} from '../lib/log';
-import 'antd/dist/antd.css';
 
 chrome.runtime.sendMessage({}, (response) => {
     var checkReady = setInterval(() => {
@@ -15,28 +13,10 @@ chrome.runtime.onMessage.addListener(async (msg)=>{
     console.log('get message ', msg);
     if (msg.action === 'init'){
         try {
-            await init();
+            const pkg = await import('../page/init');
+            await pkg.init();
         } catch (error) {
             logError(error);
         }    
     }
 })
-
-async function init(){
-    const id = await db.init();
-    if (!id) {
-        return;
-    }
-
-    // const myStamp = await db.getMyStamp(id);
-    // const data = await db.fetchNewest(id, myStamp);
-    // console.log('data is ', data);
-    const newId = await db.updateRecord([{
-        id:'153167379', tags:[], price: NaN, timestamp: Date.now(), loc: [0, 0], title: 'test'
-    }], id);
-    if (!newId) {
-        return;
-    }
-    const newData = await db.getRecord(id);
-    console.log(newData);
-}
