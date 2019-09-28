@@ -1,5 +1,2 @@
-import {Store} from 'redux';
-export {};
-declare global {
-
-}
+declare module '*.less';
+declare module '*.css';

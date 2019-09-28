@@ -6,10 +6,21 @@ export function getcode(c: string) {
     }
     return '';
 }
-
+export function getCity(name:string){
+    const cityList = areaUID.map(el=>el.substring(0, el.indexOf('|')));
+    const city = cityList.find(el=>name.includes(el));
+    return city||'上海';
+}
+export interface IStation {
+    is_practical: 0 | 1;
+    name: string;
+    uid: string;
+    x: number;
+    y: number; 
+}
 export interface IMetro {
     line_name: string;
     line_uid: string;
     pair_line_uid: string;
-    stops: Array<{ is_practical: 0 | 1, name: string, uid: string, x: number, y: number }>
+    stops:IStation[];
 }

@@ -1,7 +1,9 @@
 import * as db from '../lib/database';
 import {rpc} from '../lib/rpc';
+import {logError} from '../lib/log';
 import {IAction, actions} from './action';
 import {State, initState} from './state';
+import Swal from 'sweetalert2';
 import {takeEvery, all, call, put, select} from 'redux-saga/effects';
 export function reducer(state:State=initState, act:IAction):State{
     switch(act.type){
@@ -19,12 +21,21 @@ export function reducer(state:State=initState, act:IAction):State{
 const subsagas:Record<string, any> = {
     'global/init': function* init(act:IAction){
         yield call(console.log, 'start');
-        const id = yield call(db.init);
+        let id = yield call(db.init);
         if (!id) {
             return
         }
 
-        const timeStamp = yield call(db.getMyStamp, id);
+        // 出现问题的情况
+        let timeStamp = yield call(db.getMyStamp, id);
+        if (!timeStamp){
+            id = yield call(db.init, true);
+            if (!id) {
+                return
+            }
+            timeStamp = yield call(db.getMyStamp, id);
+        }
+
         const item = yield call(db.fetchNewest, id, timeStamp);
         yield put(actions.set({id, item, timeStamp}));
     },
@@ -41,7 +52,11 @@ function wrapper(work:any){
         try {
             yield work(act, ...others);            
         } catch (error) {
-            yield call(console.log, error);
+            if (error.message==='login'){
+                Swal.fire({text: '请先登录豆瓣', type:'info'});
+            }else{
+                yield call(logError, error);
+            }
         }
         yield put(actions.asyncEnd());
     }

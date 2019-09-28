@@ -1,9 +1,9 @@
 import axios from 'axios';
-import * as React from 'react';
 import * as cookie from 'js-cookie';
 import * as constant from './constant';
-import {Modal, Input, message} from 'antd';
 import * as LZUTF8 from 'lzutf8';
+import Swal from 'sweetalert2';
+import 'sweetalert2/dist/sweetalert2.css'
 /**
  * captcha-id: pr3TnRPoUFyOkt5CBysl4Bto:en
  * captcha-solution: drawer
@@ -26,43 +26,62 @@ export function getUid(){
 }
 
 function getCaptcha(data:any){
-    let inputEle:HTMLInputElement;
-    return new Promise<string>((res,rej)=>{
-        Modal.confirm({
-            title: data.error,
-            content: <div><img src={data.captcha_img} width="250"/><Input style={{width: 250, marginTop: '1em'}} ref={dom=>{if(dom && dom.input){inputEle=dom.input;}}}/></div>,
-            onCancel:()=>{rej('验证码错误')},
-            onOk: ()=>{
-                res(inputEle.value);
+        return Swal.fire({
+            titleText:'请输入验证码',
+            html: `<img src="${data.captcha_img}" width="200"/>`,
+            input:'text',
+            inputPlaceholder:'验证码',
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            showCancelButton: true,
+        }).then((val)=>{
+            if (val.value){
+                return val.value;
             }
-        });
-    });
+            return '';
+        })
 }
 
 async function post(url:string, body:FormData){
-    const res = await axios.post(url,body);
-    if (res.status !== 200) {
-        throw Error(url + ' : '+res.statusText);
-    } 
-    if (res.data.error) {
-        if (res.data.captcha_img) {
-            const sol = await getCaptcha(res.data);
-            body.append('captcha-id', res.data.captcha_id);
-            body.append('captcha-solution', sol);
-            const i = await post(url, body);
-            return i;
-        }
-        throw Error(url + ' : '+res.data.error);
+    if (document.querySelector('.nav-login')){
+        throw Error('login');
     }
-    return res;
+    try {
+        const res = await axios.post(url,body);
+        if (res.status !== 200) {
+            throw Error(url + ' : '+res.statusText);
+        } 
+        if (res.data.error) {
+            if (res.data.captcha_img) {
+                const sol = await getCaptcha(res.data);
+                body.append('captcha-id', res.data.captcha_id);
+                body.append('captcha-solution', sol);
+                const i = await post(url, body);
+                return i;
+            }
+            throw Error(url + ' : '+res.data.error);
+        }
+        return res;        
+    } catch (error) {
+        throw Error(url + ' : '+error);    
+    }
+
 }
 
 async function get(url:string){
-    const res = await axios.get(url);
-    if (res.status !== 200) {
-        throw Error(url + ' : '+res.statusText);
-    } 
-    return res;
+    if (document.querySelector('.nav-login')){
+        throw Error('login');
+    }
+    try {
+        const res = await axios.get(url);
+        if (res.status !== 200) {
+            throw Error(url + ' : '+res.statusText);
+        } 
+        return res;
+            
+    } catch (error) {
+        throw Error(url + ' : '+error);        
+    }
 }
 
 export interface Item{
@@ -184,23 +203,27 @@ export async function updateRecord(obj:Array<Item>, noteId:string){
 }
 
 function promptNoteId(){
-    return new Promise<string>((res, rej)=>{
-        let inputEle:HTMLInputElement;
-        Modal.confirm({
-            title: '请输入已有的记录ID',
-            content: <div>
-                <p>请填入之前建立的前缀为{constant.DB_NOTE_ID}的日志ID</p>
-                <p>日志ID为日志链接地址的数字字段，如<strong>https://www.douban.com/note/735731400/</strong>中的735731400</p>
-                <p>留空或者不填则会重新新的日志记录</p>
-                <Input ref={dom=>{if(dom && dom.input){inputEle=dom.input;}}}/>
-            </div>,
-            onCancel:()=>{
-                res('')
-            },
-            onOk:()=>{
-                res(inputEle.value);
-            }
-        })
+    const dom = document.createElement('div');
+    dom.innerHTML = `<p>请填入之前建立的前缀为${constant.DB_NOTE_ID}的日志ID</p>
+    <p>日志ID为日志链接地址的数字字段，如<strong>https://www.douban.com/note/735731400/</strong>中的735731400</p>
+    <p>留空或者不填则会重新新的日志记录</p>`;
+    // const inputEle = document.createElement('input');
+    // dom.append(inputEle);
+    return Swal.fire({
+        titleText:'初始化设置',
+        html: `<p>请填入之前建立的前缀为${constant.DB_NOTE_ID}的日志ID</p>
+        <p>日志ID为日志链接地址的数字字段，如<strong>https://www.douban.com/note/735731400/</strong>中的735731400</p>
+        <p>留空或者不填则会重新新的日志记录</p>`,
+        input:'text',
+        inputPlaceholder:'日志ID',
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        showCancelButton: true,
+    }).then(val=>{
+        if (val.value){
+            return val.value;
+        }
+        return '';
     });
 }
 
@@ -231,25 +254,30 @@ export async function fetchNewest(myId:string, myStamp:number){
 }
 
 export async function getMyStamp(id:string){
-    const res = await get(getPath(id, 'note'));
-    if (!res.data){
+    try {
+        const res = await get(getPath(id, 'note'));
+        if (!res.data){
+            return 0;
+        }
+    
+        const dom = document.createElement('div');
+        dom.innerHTML = res.data;
+        
+        const h1 = dom.querySelector('h1');
+        if (!h1){
+            return 0;
+        }
+        const stamp = Number(h1.textContent.substr(constant.DB_NOTE_ID.length+1));
+        return stamp;        
+    } catch (error) {
         return 0;
     }
 
-    const dom = document.createElement('div');
-    dom.innerHTML = res.data;
-    
-    const h1 = dom.querySelector('h1');
-    if (!h1){
-        return 0;
-    }
-    const stamp = Number(h1.textContent.substr(constant.DB_NOTE_ID.length+1));
-    return stamp;
 }
 
-export async function init(){
+export async function init(force:boolean=false){
     let noteId = localStorage.getItem(constant.DB_NOTE_ID);
-    if (noteId){
+    if (!force && noteId){
         console.log('note id is ', noteId);
         return noteId;
     }
@@ -263,7 +291,7 @@ export async function init(){
 
     noteId = await createRecord([]);
     if (noteId) {
-        Modal.info({title:'新建记录成功', content:'创建了前缀为'+constant.DB_NOTE_ID+'的日志用于记录数据，请勿删除'});
+        Swal.fire({title:'新建记录成功', text:'创建了前缀为'+constant.DB_NOTE_ID+'的日志用于记录数据，请勿删除', type:'success'});
     }
 
     console.log('note id is ', noteId);

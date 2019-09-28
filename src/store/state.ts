@@ -7,10 +7,12 @@ export interface State {
     id: string;
     timeStamp: number;
     loading: boolean;
+    group: string;
 }
 
 export const initState: State = {
     item: [],
+    group: '',
     metro: [],
     city: '',
     id: '',
