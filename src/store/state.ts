@@ -1,6 +1,8 @@
 import {Item} from '../lib/database';
 import {IMetro} from '../lib/city';
+import {AvaliableGp} from '../lib/constant';
 export interface State {
+    isReady: boolean;
     metro: IMetro[];
     city: string;
     item: Item[];
@@ -12,6 +14,7 @@ export interface State {
 
 export const initState: State = {
     item: [],
+    isReady: AvaliableGp.some(el=>location.pathname.includes(el)),
     group: '',
     metro: [],
     city: '',

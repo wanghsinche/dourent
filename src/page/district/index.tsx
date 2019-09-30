@@ -39,7 +39,7 @@ export default class District extends React.Component<Props, State>{
             <label >区域:</label>
             <ul >
                 {this.props.value.map(el=>
-                    <li><a className="tag">{el}&nbsp;&nbsp;<i onClick={()=>this.removeTag(el)}>x</i></a></li>)}
+                    <li><a className="tag">&nbsp;{el}&nbsp;&nbsp;<i onClick={()=>this.removeTag(el)}>&nbsp;x&nbsp;</i></a></li>)}
                 <input placeholder="可不填或者输入多个区域" onBlur={this.addTag} onKeyUp={e=>e.keyCode===13&&this.addTag()} ref={dom=>this.inputEle=dom}/>
             </ul>
         </div>;

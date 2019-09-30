@@ -25,10 +25,10 @@ export function getUid(){
     return uid;    
 }
 
-function getCaptcha(data:any){
+function getCaptcha(captcha_img:string){
         return Swal.fire({
             titleText:'请输入验证码',
-            html: `<img src="${data.captcha_img}" width="200"/>`,
+            html: `<img src="${captcha_img}" width="200"/>`,
             input:'text',
             inputPlaceholder:'验证码',
             confirmButtonText: '确定',
@@ -42,7 +42,7 @@ function getCaptcha(data:any){
         })
 }
 
-async function post(url:string, body:FormData){
+export async function post(url:string, body:FormData){
     if (document.querySelector('.nav-login')){
         throw Error('login');
     }
@@ -53,7 +53,7 @@ async function post(url:string, body:FormData){
         } 
         if (res.data.error) {
             if (res.data.captcha_img) {
-                const sol = await getCaptcha(res.data);
+                const sol = await getCaptcha(res.data.captcha_img);
                 body.append('captcha-id', res.data.captcha_id);
                 body.append('captcha-solution', sol);
                 const i = await post(url, body);
@@ -68,7 +68,7 @@ async function post(url:string, body:FormData){
 
 }
 
-async function get(url:string){
+export async function get(url:string){
     if (document.querySelector('.nav-login')){
         throw Error('login');
     }
@@ -76,7 +76,7 @@ async function get(url:string){
         const res = await axios.get(url);
         if (res.status !== 200) {
             throw Error(url + ' : '+res.statusText);
-        } 
+        }
         return res;
             
     } catch (error) {
@@ -90,7 +90,6 @@ export interface Item{
     price: number|null;
     timestamp: number;
     loc: number[]|[number, number];
-    title: string;
 }
 
 function extractData(s:string){
@@ -113,7 +112,7 @@ function decode(s:string){
     return JSON.parse(ss);
 }
 
-function getPath(id:string, type:'note'|'publish'|'peopleNotes'|'searchNotes'){
+export function getPath(id:string, type:'note'|'publish'|'peopleNotes'|'searchNotes'|'discussion'){
     const i = new URL('https://www.douban.com');
     if (type === 'note'){
         i.pathname = `/note/${id}/`;
@@ -123,6 +122,9 @@ function getPath(id:string, type:'note'|'publish'|'peopleNotes'|'searchNotes'){
     }
     if (type === 'peopleNotes'){
         i.pathname = `/people/${id}/notes/`;
+    }
+    if (type === 'discussion'){
+        i.pathname = `/group/${id}/discussion`;
     }
     if (type === 'searchNotes'){
         i.pathname = `/search`;
