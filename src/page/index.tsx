@@ -8,6 +8,7 @@ import MetroSelect from './metroSelect';
 import District from './district';
 import TagSelect from './tagSelect';
 import * as constant from '../lib/constant';
+import {main} from '../test';
 
 type Props = Partial<StoreState> & IActionFunc;
 
@@ -40,7 +41,9 @@ class Index extends React.Component<Props, State>{
     search=()=>{
         const {district, station, structure, rentType} = this.state;
         let tags:string[] = district.concat(station, structure, rentType);
-        console.log(tags);
+        // console.log(tags);
+        // this.props.process(tags);
+        main();
     }
     render(){
         const loadingIcon = this.props.loading?'...loading...':'';
@@ -82,7 +85,7 @@ class Index extends React.Component<Props, State>{
 function mapStoreToProps(s:StoreState):Partial<StoreState>{
     return {
         id:s.id, item:s.item, metro: s.metro, city: s.city, loading:s.loading,
-        group: s.group, isReady: s.isReady
+        group: s.group, isReady: s.isReady, res: s.res
     };
 }
 

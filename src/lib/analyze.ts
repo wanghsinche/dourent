@@ -1,14 +1,14 @@
 import {Item, getPath, get} from './database';
 import {logError} from './log';
-import * as readArt from 'read-art';
-
-interface IRecord {
+import * as Readability from 'readability';
+export interface IRecord {
     href: string;
     content: string;
     timeStamp: number;
     id:string;
+    tags?: string[];
 }
-class Analyze {
+export class Analyze {
     heuristicData:Item[];
     maxItem = 100;
     currentItem = 0;
@@ -16,10 +16,12 @@ class Analyze {
     offset = 50;
     tags: string[];
     price: number;
-    constructor(data:Item[], tags:string[], price: number){
+    gpId: string;
+    constructor(gpId: string, data:Item[], tags:string[], price: number){
         this.heuristicData = data;
         this.tags = tags;
         this.price = price;
+        this.gpId = gpId;
     }
     private hrefToId(href:string){
         const id = href.match(/topic\/(\d+)\//);
@@ -28,12 +30,13 @@ class Analyze {
         }
         return '';
     }
-    private async getTag(tags:string[], content:string){
-
+    private getTag(tags:string[], content:string){
+        const found:string[] = []
+        return found;
     }
-    private async process(gpId:string){
+    async process(){
         try {
-            const url = new URL(getPath(gpId, 'discussion'));
+            const url = new URL(getPath(this.gpId, 'discussion'));
             url.searchParams.set('start', this.currentStart+'');
             const listPage = await get(url.href);
             const dom = document.createElement('div');
@@ -41,7 +44,7 @@ class Analyze {
             const elelist:IRecord[] = Array.from(dom.querySelectorAll('.article tr'))
             .filter(el=>el.className!=='th')
             .map(el=>{
-                const title = el.querySelector('.title');
+                const title = el.querySelector('.title a');
                 let time = el.querySelector('.time').textContent;
                 if (time.includes(':')){
                     time = (new Date()).getFullYear() + '-' +time;
@@ -55,16 +58,26 @@ class Analyze {
             );
             const contents = await Promise.all(elelist.map(async el=>{
                 const res = await get(el.href);
-                const art = await readArt(res.data, {
-                    output: {
-                      type: 'text',
-                      stripSpaces: true}},
-                );
-                return {...el, content: art.title + ' : ' + art.content};
-            }));
-        
+                if(res) {
+                    var doc = document.implementation.createDocument ('http://www.w3.org/1999/xhtml', 'html', null);
+                    var body = document.createElementNS('http://www.w3.org/1999/xhtml', 'body');
+                    body.innerHTML = res.data;
+                    body.setAttribute('id', 'abc');
+                    doc.documentElement.appendChild(body);
 
-            
+                    // var art = new Readability(doc).parse();
+    
+                    return {...el, content: '' };//art.title + ' : ' + art.content};    
+                }
+                return el;
+            }));
+                       
+            this.currentStart += contents.length;
+
+            return contents.map(el=>({
+                ...el,
+                tags: this.getTag(this.tags, el.content)
+            }));
         } catch (error) {
             logError(error);
         }
