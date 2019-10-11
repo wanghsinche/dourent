@@ -23,6 +23,11 @@ export class Analyze {
         this.price = price;
         this.gpId = gpId;
     }
+    private sleep(ms=100){
+        return new Promise(res=>setTimeout(() => {
+            res();
+        }, ms))
+    }
     private hrefToId(href:string){
         const id = href.match(/topic\/(\d+)\//);
         if (id) {
@@ -35,6 +40,7 @@ export class Analyze {
         return found;
     }
     async process(){
+        console.log('waiting...');
         try {
             const url = new URL(getPath(this.gpId, 'discussion'));
             url.searchParams.set('start', this.currentStart+'');
@@ -56,21 +62,26 @@ export class Analyze {
                     content: '',
                 };}
             );
-            const contents = await Promise.all(elelist.map(async el=>{
+            const contents: IRecord[] = [];
+            for (let i = 0; i< elelist.length;i++){
+                const el = elelist[i];
                 const res = await get(el.href);
                 if(res) {
-                    var doc = document.implementation.createDocument ('http://www.w3.org/1999/xhtml', 'html', null);
-                    var body = document.createElementNS('http://www.w3.org/1999/xhtml', 'body');
+                    var doc = document.implementation.createDocument (null, 'html', null);
+                    var body = document.createElement('body');
                     body.innerHTML = res.data;
-                    body.setAttribute('id', 'abc');
                     doc.documentElement.appendChild(body);
 
                     // var art = new Readability(doc).parse();
     
-                    return {...el, content: '' };//art.title + ' : ' + art.content};    
+                    contents.push({...el, content: body.textContent });//art.title + ' : ' + art.content};    
+                } else{
+                    contents.push(el);
                 }
-                return el;
-            }));
+                if(i%5===0){
+                    await this.sleep();
+                }
+            }
                        
             this.currentStart += contents.length;
 

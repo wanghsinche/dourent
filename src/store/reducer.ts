@@ -48,14 +48,15 @@ const subsagas:Record<string, any> = {
     },
     'global/process': function* process(act:IAction){
         const gpId = yield select((s:State)=>{
-            console.log(s);
             return s.group;
         });
+        const originRes = yield select((s:State)=>s.res);
+
         if (!myProccessor){
             myProccessor = new Analyze(gpId, [], act.payload.tags, act.payload.price);
         }
         const res = yield call([myProccessor, myProccessor.process]);
-        yield put(actions.set({res}));
+        yield put(actions.set({res:originRes.concat(res)}));
         yield call(console.log, res);
     }    
 };

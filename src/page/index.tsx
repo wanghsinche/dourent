@@ -41,9 +41,9 @@ class Index extends React.Component<Props, State>{
     search=()=>{
         const {district, station, structure, rentType} = this.state;
         let tags:string[] = district.concat(station, structure, rentType);
-        // console.log(tags);
-        // this.props.process(tags);
-        main();
+        console.log(tags);
+        this.props.process(tags);
+        // main();
     }
     render(){
         const loadingIcon = this.props.loading?'...loading...':'';
