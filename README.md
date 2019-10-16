@@ -3,6 +3,10 @@
 
 豆瓣租房小组插件：让大家更快找到心水的房子。A house renting extension for douban. Everyone can find their favorite house quickly
 
+## 下载地址
+
+[release](https://github.com/wanghsinche/dourent/releases)
+
 ## Developed from TypeScript / React / Webpack / Chrome Extension Boilerplate
 
 You can use this boilerplate code to start developing a Chrome extension using [TypeScript](https://www.typescriptlang.org/)/JS, [React](https://reactjs.org/) for the frontend, and [Webpack](https://webpack.js.org/) as the build system.
