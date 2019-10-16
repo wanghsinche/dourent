@@ -15,17 +15,25 @@ export function main(){
     const sibiling = document.querySelector('.article .group-board');
     sibiling.after(dom);
     
+    const oriDom = document.querySelector('#group-topics > div:nth-child(2)');
+    oriDom.setAttribute('id', 'dourent-ori');
+    
+    const resDom = document.createElement('div');
+    resDom.setAttribute('id', 'dourent-res');
+    resDom.style.display = 'none';
+    
+    oriDom.after(resDom);
+
     const sagaMid= createSagaMiddleware();
     
     const store = createStore(reducer, applyMiddleware(sagaMid));
     
     sagaMid.run(mySaga);
-    
     render(<Provider store={store}>
         <Index />
     </Provider>, dom);
     
     render(<Provider store={store}>
         <Result />
-    </Provider>, document.querySelector('#group-topics > div:nth-child(2)'))
+    </Provider>, resDom)
 }

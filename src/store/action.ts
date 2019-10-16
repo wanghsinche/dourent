@@ -26,7 +26,7 @@ export const actions = {
     asyncEnd: ()=>createAction('global/asyncEnd'),
     set: (s:Partial<State>)=>createAction('global/set', s),
     init: ()=>createAction('global/init'),
-    process: (tags:string[])=> createAction('global/process',{tags,price:0}),
+    process: (tags?:string[])=> createAction('global/process',{tags,price:0}),
     fetchData: ()=>createAction('global/fetchData'),
     fetchMetro: ()=>createAction('global/fetchMetro'),
 }

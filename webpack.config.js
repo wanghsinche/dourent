@@ -21,6 +21,9 @@ module.exports = {
 
     module: {
         rules: [
+            { test: /\.(jpg|svg|png|gif)?$/, loader: "file-loader", options:{
+                name: '[name].[ext]',
+            }},
             { test: /\.tsx?$/, loader: "ts-loader" },
             { test: /\.css$/, use: ['style-loader', {
                 loader: 'css-loader',

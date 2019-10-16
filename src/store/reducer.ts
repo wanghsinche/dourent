@@ -23,23 +23,37 @@ let myProccessor:Analyze;
 const subsagas:Record<string, any> = {
     'global/init': function* init(act:IAction){
         yield call(console.log, 'start');
-        let id = yield call(db.init);
-        if (!id) {
-            return
-        }
+        const id = 'test';
+        const timeStamp = Date.now();
+        // let id = yield call(db.init);
+        // if (!id) {
+        //     return
+        // }
 
-        // 出现问题的情况
-        let timeStamp = yield call(db.getMyStamp, id);
-        if (!timeStamp){
-            id = yield call(db.init, true);
-            if (!id) {
-                return
-            }
-            timeStamp = yield call(db.getMyStamp, id);
+        // // 出现问题的情况
+        // let timeStamp = yield call(db.getMyStamp, id);
+        // if (!timeStamp){
+        //     id = yield call(db.init, true);
+        //     if (!id) {
+        //         return
+        //     }
+        //     timeStamp = yield call(db.getMyStamp, id);
+        // }
+        const oriDom = document.getElementById('dourent-ori');
+        if (oriDom) {
+            oriDom.style.display = 'none';
+        } 
+        const resDom = document.getElementById('dourent-res');
+        if (resDom) {
+            resDom.style.display = 'block';
         }
-
-        const item = yield call(db.fetchNewest, id, timeStamp);
-        yield put(actions.set({id, item, timeStamp}));
+        const searchDom:any = document.querySelector('.group-topic-search');
+        if (searchDom) {
+            searchDom.style.display = 'none';
+        }
+        const item = [];
+        // const item = yield call(db.fetchNewest, id, timeStamp);
+        yield put(actions.set({id, item, timeStamp, launched:true}));
     },
     'global/fetchMetro': function* fetchMetro(act:IAction){
         const city = yield select((s:State)=>s.city);
@@ -51,13 +65,17 @@ const subsagas:Record<string, any> = {
             return s.group;
         });
         const originRes = yield select((s:State)=>s.res);
+        yield put(actions.set({more:true}));
 
-        if (!myProccessor){
+
+        if (!myProccessor || !!act.payload.tags){
+            yield put(actions.set({res:[]}));
             myProccessor = new Analyze(gpId, [], act.payload.tags, act.payload.price);
         }
         const res = yield call([myProccessor, myProccessor.process]);
-        yield put(actions.set({res:originRes.concat(res)}));
-        yield call(console.log, res);
+        yield put(actions.set({res:originRes.concat(res), more: res.length>0}));
+        
+        yield call(console.log, res, res.length>0);
     }    
 };
 

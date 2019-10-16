@@ -1,7 +1,7 @@
 import * as React from "react"
 import * as ReactDOM from "react-dom"
 
-// import "../styles/popup.css"
+import "../styles/popup.css"
 type IAction = 'init';
 class Hello extends React.Component {
     sendMsg=(action:IAction)=>{
@@ -12,11 +12,18 @@ class Hello extends React.Component {
                 console.log('sent from popup');
             }
         });
+        chrome.tabs.create({url:'https://github.com/wanghsinche/dourent'})
     }
     render() {
         return (
             <div className="popup-padded">
-                <button onClick={()=>this.sendMsg('init')}>init</button>
+                <h3>
+                    豆瓣rent™ 
+                </h3>
+                <h4>
+                    豆瓣租房小组插件：让大家更快找到心水的房子
+                </h4>
+                <button onClick={()=>this.sendMsg('init')}>About me</button>
             </div>
         )
     }

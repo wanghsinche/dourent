@@ -1,16 +1,16 @@
 {
-    "name": "TS/R/WP Chrome Extension",
+    "name": "dourent",
     "version": "0.0.1",
     "manifest_version": 2,
-    "description": "Boilerplate for a Chrome extension with TypeScript, React, and Webpack.",
-    "homepage_url": "https://duo.com/labs",
+    "description": "豆瓣租房小组插件：让大家更快找到心水的房子。A house renting extension for douban. Everyone can find their favorite house quickly",
+    "homepage_url": "https://github.com/wanghsinche/dourent",
     "icons": {
       "16": "icons/icon16.png",
       "48": "icons/icon48.png",
       "128": "icons/icon128.png"
     },
     "browser_action": {
-      "default_title": "TSRWPCX",
+      "default_title": "dourent",
       "default_popup": "popup.html"
     },
     "default_locale": "en",
@@ -24,6 +24,9 @@
       "https://*/*","cookies","storage"
     ],
     "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'; ",
+    "web_accessible_resources":[
+      "js/spinner.svg"
+    ],
     "content_scripts": [
       {
         "matches": [

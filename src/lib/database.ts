@@ -112,7 +112,7 @@ function decode(s:string){
     return JSON.parse(ss);
 }
 
-export function getPath(id:string, type:'note'|'publish'|'peopleNotes'|'searchNotes'|'discussion'){
+export function getPath(id:string, type:'note'|'publish'|'peopleNotes'|'searchNotes'|'discussion'|'searchInGp'){
     const i = new URL('https://www.douban.com');
     if (type === 'note'){
         i.pathname = `/note/${id}/`;
@@ -130,6 +130,12 @@ export function getPath(id:string, type:'note'|'publish'|'peopleNotes'|'searchNo
         i.pathname = `/search`;
         i.searchParams.set('cat','1015');
         i.searchParams.set('q', constant.DB_NOTE_ID);
+    }
+    if (type === 'searchInGp') {
+        i.pathname = `/group/search`;
+        i.searchParams.set('cat','1013');
+        i.searchParams.set('group', id);
+        i.searchParams.set('sort', 'time');
     }
     return i.href;
 }

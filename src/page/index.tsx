@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {State as StoreState} from '../store/state';
+import {State as StoreState, priceSorter} from '../store/state';
 import {IActionFunc, actions} from '../store/action';
 import { connect } from 'react-redux';
 import {getCity, IStation} from '../lib/city';
@@ -7,8 +7,8 @@ import * as style from '../styles/navarea.module.less';
 import MetroSelect from './metroSelect';
 import District from './district';
 import TagSelect from './tagSelect';
+import Select from './select';
 import * as constant from '../lib/constant';
-import {main} from '../test';
 
 type Props = Partial<StoreState> & IActionFunc;
 
@@ -17,12 +17,10 @@ type State = {
     district: string[];
     structure: string[];
     rentType: string[];
-    launched: boolean;
 }
 
 class Index extends React.Component<Props, State>{
     state = {
-        launched: false,
         district: [],
         station: [],
         structure: [],
@@ -36,7 +34,6 @@ class Index extends React.Component<Props, State>{
     init=()=>{
         this.props.init();
         this.props.fetchMetro();
-        this.setState({launched:true});
     }
     search=()=>{
         const {district, station, structure, rentType} = this.state;
@@ -54,18 +51,19 @@ class Index extends React.Component<Props, State>{
 
         const content = !this.props.isReady?
         <div>豆瓣rent™️暂时不支持该小组</div>:
-        !this.state.launched?
+        !this.props.launched?
         <div>初号机，发射准备...</div>
         :<div className={"group-intro"}>
             <District value={this.state.district} onChange={district=>this.setState({district})}/>
             <MetroSelect metro={this.props.metro} value={this.state.station} onChange={station=>this.setState({station})}/>
             <TagSelect title="房型" tags={constant.Structure} value={this.state.structure} onChange={structure=>this.setState({structure})}/>
             <TagSelect title="类型" tags={constant.RentType} value={this.state.rentType} onChange={rentType=>this.setState({rentType})}/>
+            <Select title="价格" options={priceSorter} value={this.props.priceSort} onChange={(priceSort:any)=>this.props.set({priceSort})}/>
         </div>;
 
         const btnGp = !this.props.isReady?
         '':
-        this.state.launched ?<div className="rec-sec">
+        this.props.launched ?<div className="rec-sec">
             <span className="rec"><a onClick={this.search} className="btn">查询</a></span>
         </div>:<div className="rec-sec">
             <span className="rec"><a onClick={this.init} className="btn">启动</a></span>
@@ -83,10 +81,7 @@ class Index extends React.Component<Props, State>{
 }
 
 function mapStoreToProps(s:StoreState):Partial<StoreState>{
-    return {
-        id:s.id, item:s.item, metro: s.metro, city: s.city, loading:s.loading,
-        group: s.group, isReady: s.isReady, res: s.res
-    };
+    return s;
 }
 
 export default connect(mapStoreToProps, actions)(Index);
