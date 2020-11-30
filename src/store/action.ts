@@ -3,9 +3,7 @@ import {State} from './state';
 export type ActionType = 
 'global/set'
 |'global/init'
-|'global/fetchData'
-|'global/fetchMetro'
-|'global/process'
+|'global/fetchQDII'
 |'global/asyncEnd'
 |'global/asyncStart';
 
@@ -26,9 +24,7 @@ export const actions = {
     asyncEnd: ()=>createAction('global/asyncEnd'),
     set: (s:Partial<State>)=>createAction('global/set', s),
     init: ()=>createAction('global/init'),
-    process: (tags?:string[])=> createAction('global/process',{tags,price:0}),
-    fetchData: ()=>createAction('global/fetchData'),
-    fetchMetro: ()=>createAction('global/fetchMetro'),
+    fetchQDII: ()=>createAction('global/fetchQDII'),
 }
 
 export type IActionFunc = typeof actions;

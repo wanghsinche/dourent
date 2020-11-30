@@ -16,3 +16,7 @@ button:hover{
     padding-left: 10px;
     padding-right: 10px;
 }
+#root{
+    width: 200px;
+    height: 200px;
+}
