@@ -10,8 +10,8 @@ import { ColumnProps } from 'antd/lib/table';
 type Props = Partial<StoreState> & IActionFunc;
 
 function shouldBuy(code: string) {
-  if (code.indexOf('51')) return 1;
-  if (code.indexOf('8')) return 0;
+  if (code.includes('51')) return 1;
+  if (code.includes('8')) return 0;
   return -1;
 }
 
@@ -23,12 +23,12 @@ const Index:React.FC<Props> = p => {
     {
       dataIndex: 'id',
       title: '代码',
-      width: 100,
+      width: 120,
       fixed: 'left',
       render: v => {
         const res = shouldBuy(v);
-        if (res === 1) return <>{v}<Tag color="green">BUY</Tag></>;
-        if (res === -1) return <>{v}<Tag color="red">Danger</Tag></>;
+        if (res === 1) return <>{v} <Tag color="green">B</Tag></>;
+        if (res === -1) return <>{v} <Tag color="red">❕</Tag></>;
         return v;
       }
     },
@@ -96,7 +96,7 @@ const Index:React.FC<Props> = p => {
     },
   ];
   return <div style={{width: 600}}>
-    <Table dataSource={p.qdii} columns={column} pagination={false} rowKey="id" scroll={{ x: 80 * column.length + 1 }} />
+    <Table dataSource={p.qdii} columns={column} pagination={false} rowKey="id" scroll={{ x: 80 * column.length + 1, y: 300 }} />
   </div>;
 }
 
