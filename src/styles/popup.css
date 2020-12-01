@@ -1,5 +1,5 @@
 body {
-    min-width: 200px;
+    /* min-width: 600px; */
     /* min-height: 200px; */
 }
 button{
@@ -17,6 +17,7 @@ button:hover{
     padding-right: 10px;
 }
 #root{
-    width: 200px;
-    height: 200px;
+    margin: auto;
+    width: 600px;
+    height: 400px;
 }

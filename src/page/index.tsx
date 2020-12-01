@@ -1,27 +1,27 @@
 import * as React from 'react';
-import {State as StoreState} from '../store/state';
-import {IActionFunc, actions} from '../store/action';
-import { connect } from 'react-redux';
-import * as style from '../styles/navarea.module.less';
-import * as constant from '../lib/constant';
+import { Tabs } from 'antd';
+import QDII from './qdii';
 
-type Props = Partial<StoreState> & IActionFunc;
+// type Props = Partial<StoreState> & IActionFunc;
 
+const TabPane = Tabs.TabPane;
 
-class Index extends React.Component<Props>{
-    componentDidMount(){
-        this.props.fetchQDII();
-    }
+export default class Index extends React.Component<{}>{
 
     render(){
-        return <div>
-            {this.props.qdii && this.props.qdii.map(el=>JSON.stringify(el))}
-        </div>;
+        return   <Tabs defaultActiveKey="qdii" >
+        <TabPane tab="qdii" key="qdii">
+            <QDII />
+        </TabPane>
+        <TabPane tab="other" key="other">
+          Content of Tab Pane 2
+        </TabPane>
+      </Tabs>;    
     }
 }
 
-function mapStoreToProps(s:StoreState):Partial<StoreState>{
-    return s;
-}
+// function mapStoreToProps(s:StoreState):Partial<StoreState>{
+//     return s;
+// }
 
-export default connect(mapStoreToProps, actions)(Index);
+// export default connect(mapStoreToProps, actions)(Index);

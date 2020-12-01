@@ -5,6 +5,9 @@ import {Provider} from 'react-redux';
 import {createStore, applyMiddleware} from 'redux';
 import createSagaMiddleware from 'redux-saga';
 import {reducer, mySaga} from '../store/reducer';
+import { ConfigProvider } from 'antd';
+
+// ...
 
 export function main(dom:Element){
 
@@ -15,7 +18,10 @@ export function main(dom:Element){
     
     sagaMid.run(mySaga);
     render(<Provider store={store}>
-        <Index />
+          <ConfigProvider componentSize="small">
+            <Index />
+        </ConfigProvider>
+
     </Provider>, dom);
     
 }
