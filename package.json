@@ -4,6 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "dev": "ENV=dev webpack-dev-server",
     "watch": "webpack --watch",
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "webpack && zip -r dourent.zip dist/"
@@ -26,7 +27,7 @@
   },
   "dependencies": {
     "@types/react-redux": "^7.1.4",
-    "antd": "^3.23.4",
+    "antd": "^4.9.0",
     "axios": "^0.19.0",
     "file-loader": "^4.2.0",
     "js-cookie": "^2.2.1",
@@ -39,6 +40,6 @@
     "readability": "git+https://github.com/mozilla/readability.git",
     "redux": "^4.0.4",
     "redux-saga": "^1.1.1",
-    "sweetalert2": "^8.17.6"
+    "webpack-dev-server": "^3.11.0"
   }
 }

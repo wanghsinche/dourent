@@ -1,0 +1,38 @@
+name: Update-QDII
+
+on:
+  schedule:
+    # * is a special character in YAML so you have to quote this string
+    - cron:  '*/1 * * * *'
+
+jobs:
+  # Set the job key. The key is displayed as the job name
+  # when a job name is not provided
+  update-QDII-data:
+    # Name the Job
+    name: fetch etf data, calculate and commit them
+    # Set the type of machine to run on
+    runs-on: ubuntu-latest
+
+    steps:
+      # This action checks-out your repository under $GITHUB_WORKSPACE, so your workflow can access it.
+      - uses: actions/checkout@v2
+      # 
+      - name: Use Node.js 12.x
+        uses: actions/setup-node@v1
+        with:
+          node-version: '12'
+      - name: checkout in serverless folder
+        run: cd ./serverless
+      - run: npm i 
+      - run: npm run task:fetch-data
+      - name: Commit changes
+        uses: EndBug/add-and-commit@v5
+        with:
+          author_name: workflow bot
+          author_email: wanghsinche@zju.edu.cn
+          message: "generate data"
+          add: "static"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        

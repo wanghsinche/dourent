@@ -8,7 +8,3 @@ chrome.runtime.sendMessage({}, (response) => {
         }
     })
 });
-
-if (document.title.includes('租房')&&location.href.includes('douban.com/group')) {
-    main();
-}
