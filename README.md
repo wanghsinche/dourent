@@ -1,3 +1,5 @@
+## task status
+![Update-QDII](https://github.com/wanghsinche/dourent/workflows/Update-QDII/badge.svg?event=schedule)
 ## 下载地址
 
 [release](https://github.com/wanghsinche/dourent/releases)
