@@ -34,12 +34,10 @@ jobs:
         working-directory: ./serverless
       - name: Commit changes
         uses: EndBug/add-and-commit@v5
-        working-directory: ./serverless
         with:
           author_name: workflow bot
           author_email: wanghsinche@zju.edu.cn
           message: "generate data"
-          add: "static"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         
