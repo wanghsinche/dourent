@@ -3,7 +3,7 @@ name: Update-QDII
 on:
   schedule:
     # * is a special character in YAML so you have to quote this string
-    - cron:  '*/1 * * * *'
+    - cron:  '* * * * *'
 
 jobs:
   # Set the job key. The key is displayed as the job name
