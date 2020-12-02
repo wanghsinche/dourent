@@ -29,8 +29,8 @@ jobs:
           node-version: '12'
       - name: checkout in serverless folder
         run: cd ./serverless
-      - run: npm i 
-      - run: npm run task:fetch-data
+      - run: echo `pwd` && npm i 
+      - run: echo `pwd` && npm run task:fetch-data
       - name: Commit changes
         uses: EndBug/add-and-commit@v5
         with:
