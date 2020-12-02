@@ -20,19 +20,21 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # # This action checks-out your repository under $GITHUB_WORKSPACE, so your workflow can access it.
-      # - uses: actions/checkout@v2
+      # This action checks-out your repository under $GITHUB_WORKSPACE, so your workflow can access it.
+      - uses: actions/checkout@v2
       # 
       - name: Use Node.js 12.x
         uses: actions/setup-node@v1
         with:
           node-version: '12'
-      - name: checkout in serverless folder
-        run: cd ./serverless
-      - run: echo `pwd` && npm i 
-      - run: echo `pwd` && npm run task:fetch-data
+      - name: install dependencies of serverless
+        run: npm i 
+        working-directory: ./serverless
+      - run: npm run task:fetch-data
+        working-directory: ./serverless
       - name: Commit changes
         uses: EndBug/add-and-commit@v5
+        working-directory: ./serverless
         with:
           author_name: workflow bot
           author_email: wanghsinche@zju.edu.cn
