@@ -20,8 +20,8 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # This action checks-out your repository under $GITHUB_WORKSPACE, so your workflow can access it.
-      - uses: actions/checkout@v2
+      # # This action checks-out your repository under $GITHUB_WORKSPACE, so your workflow can access it.
+      # - uses: actions/checkout@v2
       # 
       - name: Use Node.js 12.x
         uses: actions/setup-node@v1
