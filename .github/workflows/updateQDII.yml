@@ -4,7 +4,11 @@ on:
   schedule:
     # * is a special character in YAML so you have to quote this string
     - cron:  '* * * * *'
-  push
+  push:
+    branches:
+      - main
+      - master
+
 
 jobs:
   # Set the job key. The key is displayed as the job name
