@@ -1,5 +1,5 @@
 import axios from 'axios';
-import moment from 'moment';
+import * as moment from 'moment';
 import cheerio from 'cheerio';
 const sinaFormat = 'YYYY-MM-DD'
 function convertEastMoney(txt:string){
@@ -72,9 +72,9 @@ export async function info(code:string){
 
 export async function basic(code:string, type:'1yrs'|'5yrs'|'3yrs' = '3yrs'){
     const datalen = Math.max(Math.min(parseInt(type, 10) * 250, 10* 250), 250);
+    console.log("get", code);
     const fundraw2 = await axios.get(`http://fund.eastmoney.com/pingzhongdata/${code.substr(2)}.js`)
     const etfraw = await axios.get(`http://money.finance.sina.com.cn/quotes_service/api/json_v2.php/CN_MarketData.getKLineData?scale=240&ma=no&datalen=${datalen}&symbol=${code}`)
-
     const fund2 = convertEastMoney(fundraw2.data).map((el:any)=>{
         return ({
         date: moment(el.x).format(sinaFormat),
@@ -100,5 +100,16 @@ export async function basic(code:string, type:'1yrs'|'5yrs'|'3yrs' = '3yrs'){
         }
     })
     const out = Object.values(mp).sort((a:any,b:any)=>a.date>b.date?-1:a.date===b.date?0:1).slice(0, datalen)
-    return out
+    return out as Array<{
+        date: string, close: number, netValue: number, premium: number
+    }>;
+}
+
+export async function getQDII():Promise<any[]>{
+    const url = 'http://www.jisilu.cn' + '/data/qdii/qdii_list/E';
+    const res = await axios.get(url);
+    if (res.status === 200 && res.data.rows){
+        return res.data.rows;
+    }
+    return [];
 }

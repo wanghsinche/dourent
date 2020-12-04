@@ -3,7 +3,7 @@ name: Update-QDII
 on:
   schedule:
     # * is a special character in YAML so you have to quote this string
-    - cron:  '* * 1 * *'
+    - cron:  '* 8 * * *'
   push:
     branches:
       - master
@@ -31,12 +31,12 @@ jobs:
         working-directory: ./serverless
       - run: npm run task:fetch-data
         working-directory: ./serverless
-      # - name: Commit changes
-      #   uses: EndBug/add-and-commit@v5
-      #   with:
-      #     author_name: workflow bot
-      #     author_email: wanghsinche@zju.edu.cn
-      #     message: "generate data"
-      #   env:
-      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Commit changes
+        uses: EndBug/add-and-commit@v5
+        with:
+          author_name: workflow bot
+          author_email: wanghsinche@zju.edu.cn
+          message: "generate data"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         
