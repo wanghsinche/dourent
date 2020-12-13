@@ -4,18 +4,22 @@ import {IActionFunc, actions} from '../store/action';
 import { connect } from 'react-redux';
 import * as style from '../styles/navarea.module.less';
 import * as constant from '../lib/constant';
-import { Tag, Table, Timeline, Divider } from 'antd';
+import { Tag, Table, Timeline, Divider, Progress } from 'antd';
 import { ColumnProps } from 'antd/lib/table';
 
 type Props = Partial<StoreState> & IActionFunc;
 
 function shouldBuy(score: Record<string, number>) {
-  console.log(score)
   return score.score >0.8?1:score.score <0.3?-1:0;
 }
 
 function Fund({id, title}:{id:string, title:string}){
   return <a href={`https://xueqiu.com/S/${id}/`} target="blank">{title}</a>;
+}
+
+function ValueBar({max, min, curr}:{max:number, min:number, curr:number}){
+  // return     <Progress percent={50} steps={3} />
+return <span>{min}%<Progress percent={(curr-min)/(max-min)*100} showInfo={false} style={{width: 100, margin:"0 10px"}}/>{max}%</span>;
 }
 
 const Index:React.FC<Props> = p => {
@@ -26,7 +30,7 @@ const Index:React.FC<Props> = p => {
     {
       dataIndex: 'id',
       title: '代码',
-      width: 120,
+      width: 100,
       fixed: 'left',
       render: (v, r) => {
         const res = shouldBuy(r.score);
@@ -95,6 +99,9 @@ const Index:React.FC<Props> = p => {
       title: '估算溢价',
       width: 80,
       fixed: 'right',
+      // sorter: (a, b)=>{
+      //   return a.discount_rt > b.discount_rt?1:a.discount_rt===b.discount_rt?0:-1;
+      // },
       render: (r)=>r.discount_rt
     },
   ];
@@ -107,7 +114,7 @@ const Index:React.FC<Props> = p => {
         return(
         <Timeline.Item color="green" key={el.id}>
           <p>推荐买入 {el.id} <Fund id={el.score.code} title={el.cell.fund_nm} /></p>
-          <p>{el.id} 当前溢价处于历史低位， 低于 {(el.score.larger*100).toFixed(2)}% 的时期</p>
+          <p>{el.id} 当前溢价处于历史低位， 低于 {(el.score.larger*100).toFixed(2)}% 的时期:           <ValueBar max={el.score.max/100} min={el.score.min/100} curr={parseFloat(el.cell.discount_rt)}/></p>
           <p>成交量为 {el.cell.volume} 千万元，涨幅 {el.cell.increase_rt}</p>
         </Timeline.Item>
         );
