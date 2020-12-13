@@ -42,9 +42,9 @@ async function permiumInterval(code:string, lastPermium: number){
   });
 
   const score = (most.pos - lastPermium) / (max - min) + 1;
-
+  const all = larger + smaller;
   return {
-    larger: larger / res.length, smaller: smaller / res.length, score, code
+    larger: larger / all, smaller: smaller / all, score, code, max, min
   };
 }
 
