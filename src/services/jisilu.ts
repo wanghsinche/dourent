@@ -10,3 +10,11 @@ export async function getQDII():Promise<any[]>{
     return [];
 }
 
+export async function getScrore(){
+    const url = "https://cdn.jsdelivr.net/gh/wanghsinche/dourent@master/serverless/static/qdii.json";
+    const res = await axios.get(url);
+    if (res.status === 200 && res.data){
+        return res.data;
+    }
+    return {};
+}

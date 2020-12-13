@@ -3,7 +3,7 @@ name: Update-QDII
 on:
   schedule:
     # * is a special character in YAML so you have to quote this string
-    - cron:  '* 8 * * *'
+    - cron:  '0 8 * * *'
   push:
     branches:
       - master

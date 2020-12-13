@@ -27,6 +27,12 @@ const subsagas:Record<string, any> = {
     },
     'global/fetchQDII': function* fetchMetro(act:IAction){
         const qdii = yield call(rpc, 'getQDII', {});
+        const score = yield call(rpc, 'getQDIIScore', {});
+        qdii.forEach(el=>{
+            if (score[el.id]){
+                el.score = score[el.id];
+            }
+        });
         yield put(actions.set({qdii}));
     },
 };

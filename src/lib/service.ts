@@ -2,7 +2,8 @@ import * as jisilu from '../services/jisilu';
 import {RPCReq, RPCRes, wrapRPCRes} from '../lib/rpc';
 
 const router = {
-    getQDII: jisilu.getQDII
+    getQDII: jisilu.getQDII,
+    getQDIIScore: jisilu.getScrore
 };
 
 export function listener(request:RPCReq, sender, sendResponse:(response: any) => void){

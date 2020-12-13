@@ -4,15 +4,14 @@ import {IActionFunc, actions} from '../store/action';
 import { connect } from 'react-redux';
 import * as style from '../styles/navarea.module.less';
 import * as constant from '../lib/constant';
-import { Tag, Table } from 'antd';
+import { Tag, Table, Timeline, Divider } from 'antd';
 import { ColumnProps } from 'antd/lib/table';
 
 type Props = Partial<StoreState> & IActionFunc;
 
-function shouldBuy(code: string) {
-  if (code.includes('51')) return 1;
-  if (code.includes('8')) return 0;
-  return -1;
+function shouldBuy(score: Record<string, number>) {
+  console.log(score)
+  return score.score >0.8?1:score.score <0.3?-1:0;
 }
 
 const Index:React.FC<Props> = p => {
@@ -25,8 +24,8 @@ const Index:React.FC<Props> = p => {
       title: '代码',
       width: 120,
       fixed: 'left',
-      render: v => {
-        const res = shouldBuy(v);
+      render: (v, r) => {
+        const res = shouldBuy(r.score);
         if (res === 1) return <>{v} <Tag color="green">B</Tag></>;
         if (res === -1) return <>{v} <Tag color="red">❕</Tag></>;
         return v;
@@ -95,8 +94,28 @@ const Index:React.FC<Props> = p => {
       render: (r)=>r.discount_rt
     },
   ];
+
+  const shouldBuyList = p.qdii.filter(el=>el.score.score > 0);
+
+  const line =   <Timeline style={{maxHeight: 200, overflow: "scroll"}}>
+    {shouldBuyList.map(el=>{
+      if (shouldBuy(el.score)>0) {
+        return(
+        <Timeline.Item color="green" key={el.id}>
+          <p>推荐买入 {el.id} {el.cell.fund_nm}</p>
+          <p>{el.id} 当前溢价处于历史低位， 低于 {(el.score.larger*100).toFixed(2)}% 的时期</p>
+          <p>成交量为 {el.cell.volume} 千万元，涨幅 {el.cell.increase_rt}</p>
+        </Timeline.Item>
+        );
+      
+      }
+    })}
+</Timeline>
+
   return <div style={{width: 600}}>
-    <Table dataSource={p.qdii} columns={column} pagination={false} rowKey="id" scroll={{ x: 80 * column.length + 1, y: 300 }} />
+    <Table dataSource={p.qdii} columns={column} pagination={false} rowKey="id" scroll={{ x: 80 * column.length + 1, y: 200 }} />
+    <Divider />
+    {line}
   </div>;
 }
 
