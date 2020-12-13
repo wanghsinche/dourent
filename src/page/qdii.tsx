@@ -14,6 +14,10 @@ function shouldBuy(score: Record<string, number>) {
   return score.score >0.8?1:score.score <0.3?-1:0;
 }
 
+function Fund({id, title}:{id:string, title:string}){
+  return <a href={`https://xueqiu.com/S/${id}/`} target="blank">{title}</a>;
+}
+
 const Index:React.FC<Props> = p => {
   React.useEffect(()=>{
     p.fetchQDII();
@@ -36,7 +40,7 @@ const Index:React.FC<Props> = p => {
       key: 'fund_nm',
       title: '名称',
       width: 80,
-      render: (r)=>r.fund_nm
+      render: (r, rec)=><Fund title={r.fund_nm} id={rec.score.code} />
     },
     {
       dataIndex: 'cell',
@@ -102,7 +106,7 @@ const Index:React.FC<Props> = p => {
       if (shouldBuy(el.score)>0) {
         return(
         <Timeline.Item color="green" key={el.id}>
-          <p>推荐买入 {el.id} {el.cell.fund_nm}</p>
+          <p>推荐买入 {el.id} <Fund id={el.score.code} title={el.cell.fund_nm} /></p>
           <p>{el.id} 当前溢价处于历史低位， 低于 {(el.score.larger*100).toFixed(2)}% 的时期</p>
           <p>成交量为 {el.cell.volume} 千万元，涨幅 {el.cell.increase_rt}</p>
         </Timeline.Item>
