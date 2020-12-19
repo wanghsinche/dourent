@@ -99,18 +99,25 @@ const Index:React.FC<Props> = p => {
       title: '估算溢价',
       width: 80,
       fixed: 'right',
-      // sorter: (a, b)=>{
-      //   return a.discount_rt > b.discount_rt?1:a.discount_rt===b.discount_rt?0:-1;
-      // },
       render: (r)=>r.discount_rt
     },
   ];
 
-  const shouldBuyList = p.qdii.filter(el=>el.score.score > 0);
+  const shouldBuyList = p.qdii.filter(el=>shouldBuy(el.score) > 0).sort((a,b)=>b.score.score - a.score.score);
+  const shouldSellList = p.qdii.filter(el=>shouldBuy(el.score) < 0);
+
 
   const line =   <Timeline style={{maxHeight: 200, overflow: "scroll"}}>
+    {shouldSellList.map(el=>{
+        return(
+        <Timeline.Item color="red" key={el.id}>
+          <p>注意 {el.id} <Fund id={el.score.code} title={el.cell.fund_nm} /></p>
+          <p>{el.id} 当前溢价处于历史高位， 高于 {(el.score.smaller*100).toFixed(2)}% 的时期:           <ValueBar max={el.score.max/100} min={el.score.min/100} curr={parseFloat(el.cell.discount_rt)}/></p>
+          <p>成交量为 {el.cell.volume} 千万元，涨幅 {el.cell.increase_rt}</p>
+        </Timeline.Item>
+        );
+    })}
     {shouldBuyList.map(el=>{
-      if (shouldBuy(el.score)>0) {
         return(
         <Timeline.Item color="green" key={el.id}>
           <p>推荐买入 {el.id} <Fund id={el.score.code} title={el.cell.fund_nm} /></p>
@@ -118,15 +125,15 @@ const Index:React.FC<Props> = p => {
           <p>成交量为 {el.cell.volume} 千万元，涨幅 {el.cell.increase_rt}</p>
         </Timeline.Item>
         );
-      
-      }
     })}
 </Timeline>
 
-  return <div style={{width: 600}}>
+  return <div className="panel">
     <Table dataSource={p.qdii} columns={column} pagination={false} rowKey="id" scroll={{ x: 80 * column.length + 1, y: 200 }} />
     <Divider />
+    <div  className="bottom-panel">
     {line}
+    </div>
   </div>;
 }
 
