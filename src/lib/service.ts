@@ -1,9 +1,11 @@
 import * as jisilu from '../services/jisilu';
+import * as etf from '../services/etf';
 import {RPCReq, RPCRes, wrapRPCRes} from '../lib/rpc';
 
 const router = {
     getQDII: jisilu.getQDII,
-    getQDIIScore: jisilu.getScrore
+    getQDIIScore: jisilu.getScrore,
+    getETF: etf.getETF,
 };
 
 export function listener(request:RPCReq, sender, sendResponse:(response: any) => void){

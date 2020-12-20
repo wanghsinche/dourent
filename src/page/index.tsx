@@ -12,7 +12,7 @@ export default class Index extends React.Component<{}>{
       {v}
     </span>
     render(){
-        return   <Tabs defaultActiveKey="qdii">
+        return   <Tabs defaultActiveKey="auto">
         <TabPane tab={this.getTitle('QDII溢价策略')} key="qdii">
             <QDII />
         </TabPane>

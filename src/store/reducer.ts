@@ -1,7 +1,7 @@
 import {fakerpc} from '../lib/fakerpc';
 import {rpc as truerpc} from '../lib/rpc';
 import {logError} from '../lib/log';
-import {IAction, actions} from './action';
+import {IAction, actions, ActionType} from './action';
 import {State, initState} from './state';
 import {takeEvery, all, call, put, select} from 'redux-saga/effects';
 export function reducer(state:State=initState, act:IAction):State{
@@ -18,14 +18,14 @@ export function reducer(state:State=initState, act:IAction):State{
 }
 
 const rpc = ENV==='dev' ? fakerpc : truerpc;
-
-
-const subsagas:Record<string, any> = {
+const subsagas: Partial<{
+    [k in ActionType]: any;
+}> = {
     'global/init': function* init(act:IAction){
         yield call(console.log, 'start');
 
     },
-    'global/fetchQDII': function* fetchMetro(act:IAction){
+    'global/fetchQDII': function* fetchQDII(act:IAction){
         const qdii = yield call(rpc, 'getQDII', {});
         const score = yield call(rpc, 'getQDIIScore', {});
         qdii.forEach(el=>{
@@ -34,6 +34,10 @@ const subsagas:Record<string, any> = {
             }
         });
         yield put(actions.set({qdii}));
+    },
+    'global/fetchETF': function* fetchETF(act:IAction){
+        const etf = yield call(rpc, 'getETF', act.payload);
+        yield put(actions.set({etf}));
     },
 };
 

@@ -14,7 +14,12 @@ module.exports = {
                 target: 'https://www.jisilu.cn',
                 pathRewrite: { '^/jisilu': '' },
                 changeOrigin: true
-            }
+            },
+            '/money.finance.sina.com.cn': {
+                target: 'http://money.finance.sina.com.cn',
+                pathRewrite: { '^/money.finance.sina.com.cn': '' },
+                changeOrigin: true
+            },
         },
         contentBase: path.join(__dirname, 'dist'),
         compress: true,
