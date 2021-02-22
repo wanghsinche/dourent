@@ -6,6 +6,7 @@ const router = {
     getQDII: jisilu.getQDII,
     getQDIIScore: jisilu.getScrore,
     getETF: etf.getETF,
+    shouldBuyIn: etf.shouldBuyIn,
 };
 
 export function listener(request:RPCReq, sender, sendResponse:(response: any) => void){

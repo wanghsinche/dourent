@@ -37,7 +37,8 @@ const subsagas: Partial<{
     },
     'global/fetchETF': function* fetchETF(act:IAction){
         const etf = yield call(rpc, 'getETF', act.payload);
-        yield put(actions.set({etf}));
+        const shouldBuyIn = yield call(rpc, 'shouldBuyIn', etf);
+        yield put(actions.set({etf, shouldBuyIn}));
     },
 };
 
@@ -47,11 +48,7 @@ function wrapper(work:any){
         try {
             yield work(act, ...others);            
         } catch (error) {
-            if (error.message==='login'){
-                console.error({text: '请先登录豆瓣', type:'info'});
-            }else{
-                yield call(logError, error);
-            }
+            yield call(logError, error);
         }
         yield put(actions.asyncEnd());
     }

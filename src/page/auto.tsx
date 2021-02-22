@@ -4,34 +4,39 @@ import {IActionFunc, actions} from '../store/action';
 import { connect } from 'react-redux';
 import { Tag, Table, Timeline, Divider, Progress, Select } from 'antd';
 import { Chart } from '@antv/g2';
-const data = [
-  {
-    "date": "2020-01-01",
-    "BTC": 7182
-  },
-  {
-    "date": "2020-02-13",
-    "BTC": 10522
-  },
-  {
-    "date": "2020-03-12",
-    "BTC": 4829
-  },
-  {
-    "date": "2020-06-01",
-    "BTC": 10400
-  },
-  {
-    "date": "2020-10-05",
-    "BTC": 10529
-  },
-  {
-    "date": "2020-12-19",
-    "BTC": 23150
-  },
-];
+
 
 type Props = Partial<StoreState> & IActionFunc;
+
+function markShouldBuyIn(myChart: Chart, day: string, close: number, buyTimes: number){
+  const label = '买入'; //+ (buyTimes > 1?( 'X' + buyTimes) : '');
+  myChart.annotation().dataMarker({
+    top: true,
+    position: [day, close],
+    text: {
+      content: label,
+      style: {fill: 'green'}
+    },
+    line: {
+      length:  20,
+    },
+  });
+}
+
+function getTicks(scale) {
+  const { values } = scale;
+  const ticks = [];
+  let lastDay:Date = null;
+  values.forEach(day => {
+    const current = new Date(day);
+    if (lastDay && lastDay.getMonth() !== current.getMonth()){
+      ticks.push(day);
+    }
+    lastDay = current;
+  });
+  return ticks;
+}
+
 
 const Index:React.FC<Props> = p => {
   const container = React.createRef<HTMLDivElement>();
@@ -60,7 +65,19 @@ const Index:React.FC<Props> = p => {
         }
       }
     });
+
+    tmp.axis('day', {
+      grid: {
+        line: {
+          type: 'line'
+        }
+      }
+    });
   
+    tmp.scale('day', {
+      tickMethod: getTicks
+    });
+
     tmp.line().position('day*close').color('#1890ff');
     tmp.removeInteraction('legend-filter'); // 自定义图例，移除默认的分类图例筛选交互
 
@@ -70,7 +87,7 @@ const Index:React.FC<Props> = p => {
 
   React.useEffect(()=>{
     if(chart.current){
-      chart.current.annotation().clear();
+      chart.current.annotation().clear(true);
       chart.current.data(p.etf);
       chart.current.scale({
         date: {
@@ -81,19 +98,9 @@ const Index:React.FC<Props> = p => {
           max: Math.max.apply(null, p.etf.map(el=>el.close)) * 1.2
         }
       });
-  
-      if (p.etf[50]){
-        chart.current.annotation().dataMarker({
-          top: true,
-          position: [p.etf[50].day, p.etf[50].close],
-          text: {
-            content: '买入',
-          },
-          line: {
-            length:  20,
-          },
-        });
-      }
+      p.shouldBuyIn.forEach(el=>{
+        el && markShouldBuyIn(chart.current, el.day, el.close, el.buyTimes);
+      })
       chart.current.render();
     } 
   }, [p.etf]);
@@ -108,6 +115,7 @@ const Index:React.FC<Props> = p => {
       定投标的：<Select value={p.etfTarget}
       onChange={onChange}
       options={[
+        {label: 'sz159928', value: 'sz159928'},
         {label: 'sh513100', value: 'sh513100'},
         {label: 'sh513500', value: 'sh513500'}
       ]}/>
