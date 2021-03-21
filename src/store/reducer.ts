@@ -17,7 +17,7 @@ export function reducer(state:State=initState, act:IAction):State{
     }
 }
 
-const rpc = ENV==='dev' ? fakerpc : truerpc;
+const rpc = ENV!=='extension' ? fakerpc : truerpc;
 const subsagas: Partial<{
     [k in ActionType]: any;
 }> = {

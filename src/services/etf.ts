@@ -1,6 +1,6 @@
 import axios from 'axios';
-const domain = ENV==='dev'? '/money.finance.sina.com.cn' : 'http://money.finance.sina.com.cn';
-console.log(ENV==='dev', domain);
+const domain = ENV!=='extension'? '/proxy/money.finance.sina.com.cn' : 'http://money.finance.sina.com.cn';
+console.log(ENV==='extension', domain);
 
 export async function getETF({code, type='1yrs'}:{code:string, type:'1yrs'|'5yrs'|'3yrs'}){
     const datalen = Math.max(Math.min(parseInt(type, 10) * 250, 10* 250), 250);

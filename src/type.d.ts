@@ -5,4 +5,4 @@ interface Window {
     _store:any
 }
 
-declare const ENV:'dev'|null;
+declare const ENV:'dev'|null|'extension';

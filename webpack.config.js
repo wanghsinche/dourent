@@ -10,12 +10,12 @@ module.exports = {
     },
     devServer: {
         proxy: {
-            '/jisilu': {
+            '/proxy/jisilu': {
                 target: 'https://www.jisilu.cn',
                 pathRewrite: { '^/jisilu': '' },
                 changeOrigin: true
             },
-            '/money.finance.sina.com.cn': {
+            '/proxy/money.finance.sina.com.cn': {
                 target: 'http://money.finance.sina.com.cn',
                 pathRewrite: { '^/money.finance.sina.com.cn': '' },
                 changeOrigin: true
