@@ -10,14 +10,19 @@ module.exports = {
     },
     devServer: {
         proxy: {
+            '/proxy/qtrade': {
+                target: 'https://qtrade.xyz',
+                pathRewrite: { '^/proxy/qtrade': '' },
+                changeOrigin: true
+            },
             '/proxy/jisilu': {
                 target: 'https://www.jisilu.cn',
-                pathRewrite: { '^/jisilu': '' },
+                pathRewrite: { '^/proxy/jisilu': '' },
                 changeOrigin: true
             },
             '/proxy/money.finance.sina.com.cn': {
                 target: 'http://money.finance.sina.com.cn',
-                pathRewrite: { '^/money.finance.sina.com.cn': '' },
+                pathRewrite: { '^/proxy/money.finance.sina.com.cn': '' },
                 changeOrigin: true
             },
         },
