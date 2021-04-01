@@ -44,7 +44,7 @@ async function permiumInterval(code:string, lastPermium: number){
   const score = (most.pos - lastPermium) / (max - min) + 1;
   const all = larger + smaller;
   return {
-    larger: larger / all, smaller: smaller / all, score, code, max, min
+    larger: larger / all, smaller: smaller / all, score, code, max, min, res
   };
 }
 
@@ -54,10 +54,19 @@ export function main() {
     const premium = parseFloat(d.cell.discount_rt) / 100;
     return permiumInterval(code, premium);
   })))
-  .then(list=>list.reduce((am, curr)=>{
-    const code = curr.code.substr(2);
-    am[code] = curr;
-    return am;
-  }, {}))
+  .then(list=>{
+    const data = list.reduce((am, curr)=>{
+      const code = curr.code.substr(2);
+      const {res, ...others} = curr;
+      am[code] = others;
+      return am;
+    }, {});
+    const resData = list.reduce((am, curr)=>{
+      const code = curr.code.substr(2);
+      const {res} = curr;
+      am[code] = res;
+      return am;
+    }, {});
+    return [data, resData];
+})
 }
-
