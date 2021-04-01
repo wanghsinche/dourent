@@ -1,8 +1,10 @@
 import * as jisilu from '../services/jisilu';
 import * as etf from '../services/etf';
+import * as github from '../services/github';
 import {RPCReq, RPCRes, wrapRPCRes} from '../lib/rpc';
 
-const router = {
+export const router = {
+    getQDIIHis: github.getQDIIHis,
     getQDII: jisilu.getQDII,
     getQDIIScore: jisilu.getScrore,
     getETF: etf.getETF,
@@ -23,7 +25,7 @@ export function listener(request:RPCReq, sender, sendResponse:(response: any) =>
         new Promise((_, rej)=>{
             setTimeout(() => {
                 rej("timeout");
-            }, 3000);
+            }, 10000);
         })
     ]).then(res=>{
         sendResponse(wrapRPCRes(request.rpc, request.guid, void 0, res));

@@ -1,3 +1,5 @@
+import {router} from './service';
+
 function uuidv4() {
     return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
       var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
@@ -27,7 +29,7 @@ export function wrapRPCReq(rpc:string, params:any){
     }
 }
 
-export function rpc(name:string, payload:any){
+export function rpc(name:keyof typeof router, payload:any){
     return new Promise((res, rej)=>{
         chrome.runtime.sendMessage(wrapRPCReq(name, payload), (msg:RPCRes)=>{
             if (msg.error){

@@ -45,3 +45,7 @@ button:hover{
 .bottom-panel{
     margin: 0 10px;
 }
+
+.ant-modal-content .ant-modal-close {
+    background-color: transparent;
+}
