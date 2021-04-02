@@ -1,20 +1,23 @@
 import * as React from 'react';
-import { Modal } from 'antd';
+import { Col, Divider, Modal, Row } from 'antd';
 import { Chart } from '@antv/g2';
 import useQdiiDetail from "../../store/qdii-detail";
 const { DataView } = require('@antv/data-set');
-
-export const Detail = (p:  {code: string, premium: number}) => {
+import { IRecord } from '../../services/jisilu';
+export const Detail = ({record}: {record:IRecord}) => {
   const boxContainer = React.createRef<HTMLDivElement>();
   const qdiiDetail = useQdiiDetail();
   const [show, setShow] = React.useState(false);
+  const premium =  record?(parseFloat(record.cell.discount_rt)/100).toFixed(4):0;
+  const name = record && record.cell.fund_nm;
+  const code = record && record.score.code;
   React.useEffect(()=>{
-    if (p.code) {
-      qdiiDetail.setCode(p.code);
-      qdiiDetail.getQDII(p.code);
+    if (code) {
+      qdiiDetail.setCode(code);
+      qdiiDetail.getQDII(code);
       setShow(true);
     }
-  }, [p.code])
+  }, [code])
 
   React.useEffect(()=>{
     if (!boxContainer.current || !qdiiDetail.boxValues) {
@@ -60,15 +63,15 @@ export const Detail = (p:  {code: string, premium: number}) => {
         },
       });
       chart.annotation().line({
-        start: [p.premium,0],
-        end: [p.premium,1],
+        start: [premium,0],
+        end: [premium,1],
         style: {
           stroke: '#177ddc',
           lineWidth: 1,
           lineDash: [3, 3],
         },
         text: {
-          content: (p.premium).toFixed(4),
+          content: '',
         },
       });
     chart.render();
@@ -76,7 +79,19 @@ export const Detail = (p:  {code: string, premium: number}) => {
   }, [qdiiDetail.boxValues]);
 
 return <Modal visible={show} closable={true} closeIcon={<span style={{color:'#fff'}}>x</span>} footer={false} onCancel={()=>setShow(false)}>
-  <div>{qdiiDetail.code}  </div>
-  <div ref={boxContainer} ></div>
+  <div>{name} {code} </div>
+  <Divider />
+  <Row>
+    <Col span="10">
+    溢价箱型图
+    <div ref={boxContainer} ></div>
+    </Col>
+    <Col span="10" offset="2">
+      <p>基金公司：{record && record.cell.issuer_nm}</p>
+      <p>当前溢价： {record && record.cell.discount_rt}</p>
+      <p>对标指数：{record && record.cell.index_nm}</p>
+      <p>详情： <a href={record && record.cell.urls} target="blank">{record && record.cell.urls}</a></p>
+    </Col>
+  </Row>
 </Modal>;
 }

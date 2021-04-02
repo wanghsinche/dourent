@@ -4,7 +4,7 @@ import {IActionFunc, actions} from '../../store/action';
 import { connect } from 'react-redux';
 import { Table, Timeline, Divider, Progress } from 'antd';
 import { Detail } from './qdii-detail';
-import { column, shouldBuy, Fund } from './common';
+import { getColumn, shouldBuy, Fund } from './common';
 
 type Props = Partial<StoreState> & IActionFunc;
 
@@ -45,7 +45,7 @@ const Index:React.FC<Props> = p => {
         );
     })}
 </Timeline>
-
+  const column = React.useMemo(()=>getColumn(setCurrent), []);
   return <div className="panel">
     <Table dataSource={p.qdii} columns={column} pagination={false} rowKey="id" scroll={{ x: 80 * column.length + 1, y: 200 }} 
     onRow={(record) => {
@@ -58,7 +58,7 @@ const Index:React.FC<Props> = p => {
     <div  className="bottom-panel">
     {line}
     </div>
-    <Detail code={current && current.score.code} premium={current && parseFloat(current.cell.discount_rt)/100}/>
+    <Detail record={current}/>
   </div>;
 }
 

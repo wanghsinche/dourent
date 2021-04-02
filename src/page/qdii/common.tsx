@@ -4,11 +4,11 @@ import { Tag } from "antd";
 export function shouldBuy(score: Record<string, number>) {
   return score.score >0.8?1:score.score <0.3?-1:0;
 }
-export function Fund({id, title, }:{id:string, title:string}){
-  return <a data-href={`https://xueqiu.com/S/${id}/`} target="blank">{title}</a>;
+export function Fund({id, title, onClick}:{id:string, title:string, onClick?:Function}){
+  return <a data-href={`https://xueqiu.com/S/${id}/`} target="blank" onClick={()=>onClick && onClick()}>{title}</a>;
 }
 
-export const column:ColumnProps<any>[] = [
+export const getColumn:(onClick: Function)=>ColumnProps<any>[] = (onClick: Function)=>[
   {
     dataIndex: 'id',
     title: '代码',
@@ -26,7 +26,7 @@ export const column:ColumnProps<any>[] = [
     key: 'fund_nm',
     title: '名称',
     width: 80,
-    render: (r, rec)=><Fund title={r.fund_nm} id={rec.score.code} />
+    render: (r, rec)=><Fund title={r.fund_nm} id={rec.score.code} onClick={()=>onClick(rec)}/>
   },
   {
     dataIndex: 'cell',
