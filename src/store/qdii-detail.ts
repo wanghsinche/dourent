@@ -9,7 +9,7 @@ function model() {
   const [records, setRecords] = useState([]);
 
   const getQDII = (code: string)=> {
-    rpc('getQDIIHis', {code, type: '3yrs'}).then((res:any)=>{
+    rpc('getQDIIHis', {code: code.substr(2), type: '3yrs'}).then((res:any)=>{
       setRecords(res);
     });
   };

@@ -32,7 +32,7 @@ export const Detail = (p:  {code: string}) => {
     const chart = new Chart({
       container: boxContainer.current,
       autoFit: true,
-      height: 500,
+      height: 200,
     });
     chart.data(dv.rows);
     chart.scale('range', {
@@ -61,7 +61,7 @@ export const Detail = (p:  {code: string}) => {
       });
     chart.render();
     return ()=>chart.destroy();
-  }, [p.code]);
+  }, [qdiiDetail.records]);
 
 return <Modal visible={show} closable={true} closeIcon={<span style={{color:'#fff'}}>x</span>} footer={false} onCancel={()=>setShow(false)}>
   <div>{qdiiDetail.code} detail </div>
