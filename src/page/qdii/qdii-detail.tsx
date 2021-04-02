@@ -4,7 +4,7 @@ import { Chart } from '@antv/g2';
 import useQdiiDetail from "../../store/qdii-detail";
 const { DataView } = require('@antv/data-set');
 
-export const Detail = (p:  {code: string}) => {
+export const Detail = (p:  {code: string, premium: number}) => {
   const boxContainer = React.createRef<HTMLDivElement>();
   const qdiiDetail = useQdiiDetail();
   const [show, setShow] = React.useState(false);
@@ -17,10 +17,10 @@ export const Detail = (p:  {code: string}) => {
   }, [p.code])
 
   React.useEffect(()=>{
-    if (!boxContainer.current) {
+    if (!boxContainer.current || !qdiiDetail.boxValues) {
       return;
     }
-    const data = [{ low: 1, q1: 9, median: 16, q3: 22, high: 24 }];
+    const data = [qdiiDetail.boxValues];
     const dv = new DataView().source(data);
     dv.transform({
       type: 'map',
@@ -31,19 +31,19 @@ export const Detail = (p:  {code: string}) => {
     });
     const chart = new Chart({
       container: boxContainer.current,
-      autoFit: true,
-      height: 200,
+      width: 200,
+      height: 150,
     });
     chart.data(dv.rows);
     chart.scale('range', {
-      max: 35,
+      max: qdiiDetail.boxValues.high * 1.2,
       nice: true,
     });
-    chart.tooltip({
-      showMarkers: false,
-      showTitle: false
-    });
-    
+    // chart.tooltip({
+    //   showMarkers: false,
+    //   showTitle: false
+    // });
+    chart.tooltip(false);
     chart
       .schema()
       .position('range*1')
@@ -59,12 +59,24 @@ export const Detail = (p:  {code: string}) => {
           animation: 'scale-in-x',
         },
       });
+      chart.annotation().line({
+        start: [p.premium,0],
+        end: [p.premium,1],
+        style: {
+          stroke: '#177ddc',
+          lineWidth: 1,
+          lineDash: [3, 3],
+        },
+        text: {
+          content: (p.premium).toFixed(4),
+        },
+      });
     chart.render();
     return ()=>chart.destroy();
-  }, [qdiiDetail.records]);
+  }, [qdiiDetail.boxValues]);
 
 return <Modal visible={show} closable={true} closeIcon={<span style={{color:'#fff'}}>x</span>} footer={false} onCancel={()=>setShow(false)}>
-  <div>{qdiiDetail.code} detail </div>
-  <div ref={boxContainer}></div>
+  <div>{qdiiDetail.code}  </div>
+  <div ref={boxContainer} ></div>
 </Modal>;
 }

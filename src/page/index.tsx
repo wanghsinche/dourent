@@ -1,7 +1,8 @@
 import * as React from 'react';
-import { Tabs } from 'antd';
+import { Empty, Tabs } from 'antd';
 import QDII from './qdii';
 import AUTO from './auto';
+import  Desc  from './desc';
 
 // type Props = Partial<StoreState> & IActionFunc;
 
@@ -19,8 +20,8 @@ export default class Index extends React.Component<{}>{
         <TabPane tab={this.getTitle('低价择时定投')} key="auto">
             <AUTO />
         </TabPane>
-        <TabPane tab={this.getTitle('other')} key="other">
-          Content of Tab Pane 2
+        <TabPane tab={this.getTitle('关于')} key="other">
+        <Desc />
         </TabPane>
       </Tabs>;    
     }

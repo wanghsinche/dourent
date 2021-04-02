@@ -20,7 +20,7 @@ const Index:React.FC<Props> = p => {
     p.fetchQDII();
   }, []);
 
-  const [current, setCurrent] = React.useState('');
+  const [current, setCurrent] = React.useState<any>(null);
 
   const shouldBuyList = p.qdii.filter(el=>shouldBuy(el.score) > 0).sort((a,b)=>b.score.score - a.score.score);
   const shouldSellList = p.qdii.filter(el=>shouldBuy(el.score) < 0);
@@ -50,7 +50,7 @@ const Index:React.FC<Props> = p => {
     <Table dataSource={p.qdii} columns={column} pagination={false} rowKey="id" scroll={{ x: 80 * column.length + 1, y: 200 }} 
     onRow={(record) => {
       return {
-        onClick: () => {setCurrent(record.score.code)}, // click row
+        onClick: () => {setCurrent(record)}, // click row
       };
     }}
     />
@@ -58,7 +58,7 @@ const Index:React.FC<Props> = p => {
     <div  className="bottom-panel">
     {line}
     </div>
-    <Detail code={current} />
+    <Detail code={current && current.score.code} premium={current && parseFloat(current.cell.discount_rt)/100}/>
   </div>;
 }
 

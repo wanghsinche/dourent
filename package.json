@@ -4,12 +4,12 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "server": "ENV=web node server.js",
-    "web": "ENV=web webpack",
+    "start": "ENV=web node server.js",
+    "build": "ENV=web webpack --config webpack.config.prod.js",
     "dev": "ENV=dev webpack-dev-server",
     "watch": "ENV=extension webpack --watch",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "webpack && zip -r dourent.zip dist/"
+    "build-extension": "webpack && zip -r dourent.zip dist/"
   },
   "keywords": [],
   "author": "",

@@ -4,7 +4,7 @@ import {IActionFunc, actions} from '../store/action';
 import { connect } from 'react-redux';
 import { Tag, Table, Timeline, Divider, Progress, Select } from 'antd';
 import { Chart } from '@antv/g2';
-
+import createQdiiModel from '../store/qdii';
 
 type Props = Partial<StoreState> & IActionFunc;
 
@@ -39,6 +39,7 @@ function getTicks(scale) {
 
 
 const Index:React.FC<Props> = p => {
+  const model = createQdiiModel();
   const container = React.createRef<HTMLDivElement>();
   const chart = React.useRef<Chart>(null);
   const onChange = React.useCallback((e)=>{
@@ -47,21 +48,32 @@ const Index:React.FC<Props> = p => {
   }, []);
 
   React.useEffect(()=>{
-    p.fetchETF({code: p.etfTarget});
+    model.getQDII();
+  }, [])
+
+  React.useEffect(()=>{
+    if (p.etfTarget) {
+      p.fetchETF({code: p.etfTarget});
+    }
     const tmp = new Chart({
       container: container.current,
       autoFit: true,
       height: 250,
-      padding: [10, 10, 30, 50]
+      padding: [30, 30, 30, 30]
     });
 
     tmp.axis('close', {
       position: 'left',
-      grid: null,
+      grid: {
+        line: {
+          style: {
+            stroke: '#D9D9D9'
+          }
+        }
+      },
       line: {
         style: {
-          width: 2,
-          stroke: 'rgba(255, 255, 255, 0.85)'
+          stroke: '#D9D9D9'
         }
       }
     });
@@ -69,11 +81,17 @@ const Index:React.FC<Props> = p => {
     tmp.axis('day', {
       grid: {
         line: {
-          type: 'line'
+          style: {
+            stroke: '#D9D9D9'
+          }
+        }
+      },
+      line: {
+        style: {
+          stroke: '#D9D9D9'
         }
       }
     });
-  
     tmp.scale('day', {
       tickMethod: getTicks
     });
@@ -87,6 +105,7 @@ const Index:React.FC<Props> = p => {
 
   React.useEffect(()=>{
     if(chart.current){
+      const maxLimit = Math.ceil(Math.max.apply(null, p.etf.map(el=>el.close)) * 1.5)
       chart.current.annotation().clear(true);
       chart.current.data(p.etf);
       chart.current.scale({
@@ -95,7 +114,7 @@ const Index:React.FC<Props> = p => {
         },    
         close: {
           min: 0,
-          max: Math.max.apply(null, p.etf.map(el=>el.close)) * 1.2
+          max: maxLimit
         }
       });
       p.shouldBuyIn.forEach(el=>{
@@ -106,20 +125,22 @@ const Index:React.FC<Props> = p => {
   }, [p.etf]);
 
 
-
+  const selectPanel =     <div className="bottom-panel">
+  定投标的：<Select value={p.etfTarget}
+  defaultValue="sh513100"
+  style={{minWidth: 150}}
+  onChange={onChange}
+  options={model.qdii && model.qdii.map(el=>{
+    const code = ((el.id as string).startsWith("1") ? 'sz':'sh') + el.id;
+    return ({
+    label: el.cell.fund_nm + `(${code})`, value: code
+  })})}/>
+</div>;
 
     return <div className="panel">
-    <div ref={container}/>
+    <div ref={container} style={{background: '#141414'}}/>
     <Divider />
-    <div className="bottom-panel">
-      定投标的：<Select value={p.etfTarget}
-      onChange={onChange}
-      options={[
-        {label: 'sz159928', value: 'sz159928'},
-        {label: 'sh513100', value: 'sh513100'},
-        {label: 'sh513500', value: 'sh513500'}
-      ]}/>
-    </div>
+    {selectPanel}
   </div>;
 }
 
