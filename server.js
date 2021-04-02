@@ -2,7 +2,8 @@ const express = require('express')
 const proxy = require('express-http-proxy');
 
 const app = express()
-const port = 8000
+const port = process.env.PORT || 8000
+
 
 
 app.use('/proxy/jisilu', proxy('https://www.jisilu.cn'));
