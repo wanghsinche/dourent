@@ -1,5 +1,7 @@
 const path = require('path');
 const webpack = require('webpack');
+const HtmlWebpackPlugin = require('html-webpack-plugin')
+
 module.exports = {
     mode: "production",
     entry: {
@@ -9,7 +11,7 @@ module.exports = {
     },
     output: {
         path: path.resolve(__dirname, 'dist/js'),
-        filename: '[name].js'
+        filename: '[name]-[contenthash].js'
     },
     resolve: {
         extensions: [".ts", ".tsx", ".js", ".less"]
@@ -54,6 +56,12 @@ module.exports = {
     plugins: [
         new webpack.DefinePlugin({
             'ENV': JSON.stringify(process.env.ENV),
+        }),
+        new HtmlWebpackPlugin({
+            filename: '../index.html',
+            // template: 'src/index.ejs',
+            chunks: ['popup'],
+            publicPath: 'js/'
         }),
     ],
 };

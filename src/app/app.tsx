@@ -18,7 +18,7 @@ export function main(dom:Element){
     
     sagaMid.run(mySaga);
     render(<Provider store={store}>
-          <ConfigProvider componentSize="small">
+          <ConfigProvider componentSize="middle">
             <Index />
         </ConfigProvider>
 

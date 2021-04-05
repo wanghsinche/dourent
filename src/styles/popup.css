@@ -18,8 +18,8 @@ button:hover{
 }
 #root{
     margin: auto;
-    width: 600px;
-    height: 400px;
+    width: 800px;
+    height: 600px;
 }
 
 ::-webkit-scrollbar {
@@ -39,7 +39,7 @@ button:hover{
 }
 
 .panel{
-    width: 600px;
+    width: 800px;
 }
 
 .bottom-panel{
