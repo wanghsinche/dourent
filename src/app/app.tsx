@@ -6,12 +6,11 @@ import {createStore, applyMiddleware} from 'redux';
 import createSagaMiddleware from 'redux-saga';
 import {reducer, mySaga} from '../store/reducer';
 import { ConfigProvider } from 'antd';
-
+import {monitor} from '../services/monitor';
 // ...
 
 export function main(dom:Element){
-
-
+    monitor();
     const sagaMid= createSagaMiddleware();
     
     const store = createStore(reducer, applyMiddleware(sagaMid));
