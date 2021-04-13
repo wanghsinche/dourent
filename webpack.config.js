@@ -34,7 +34,7 @@ module.exports = {
     },
     output: {
         path: path.resolve(__dirname, 'dist/js'),
-        filename: '[name]-[contenthash].js'
+        filename: '[name].js'
     },
 
     resolve: {
@@ -68,7 +68,6 @@ module.exports = {
                     loader: 'less-loader',
                     options: {
                         modifyVars: {
-                            'font-size-base': '14px'
                         },
                         javascriptEnabled: true,
                     },
@@ -80,10 +79,6 @@ module.exports = {
     plugins: [
         new webpack.DefinePlugin({
             'ENV': JSON.stringify(process.env.ENV),
-        }),
-        new HtmlWebpackPlugin({
-            // template: 'src/index.ejs',
-            chunks: ['popup'],
         }),
     ],
 };

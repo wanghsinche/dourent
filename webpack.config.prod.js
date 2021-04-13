@@ -44,7 +44,6 @@ module.exports = {
                     loader: 'less-loader',
                     options: {
                         modifyVars: {
-                            'font-size-base': '4px'
                         },
                         javascriptEnabled: true,
                     },

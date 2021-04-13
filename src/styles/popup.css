@@ -19,7 +19,7 @@ button:hover{
 #root{
     margin: auto;
     width: 800px;
-    height: 600px;
+    /* height: 600px; */
 }
 
 ::-webkit-scrollbar {
