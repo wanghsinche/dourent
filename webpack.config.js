@@ -22,6 +22,11 @@ module.exports = {
                 pathRewrite: { '^/proxy/jisilu': '' },
                 changeOrigin: true
             },
+            '/proxy/raw.githubusercontent.com': {
+                target: 'https://raw.githubusercontent.com',
+                pathRewrite: { '^/proxy/raw.githubusercontent.com': '' },
+                changeOrigin: true
+            },
             '/proxy/money.finance.sina.com.cn': {
                 target: 'http://money.finance.sina.com.cn',
                 pathRewrite: { '^/proxy/money.finance.sina.com.cn': '' },

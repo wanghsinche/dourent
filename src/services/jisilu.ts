@@ -12,7 +12,9 @@ export async function getQDII():Promise<any[]>{
 
 export async function getScrore(){
     // const url = "https://raw.githubusercontent.com/wanghsinche/dourent/master/serverless/static/qdii.json?ts="+Date.now();
-    const url = "https://cdn.jsdelivr.net/gh/wanghsinche/dourent@master/serverless/static/qdii.json?ts="+Date.now();
+    // const url = "https://cdn.jsdelivr.net/gh/wanghsinche/dourent@master/serverless/static/qdii.json?ts="+Date.now();
+    const url = '/proxy/raw.githubusercontent.com/wanghsinche/dourent/master/serverless/static/qdii.json?ts='+new Date().getDate();
+
     const res = await axios.get(url);
     if (res.status === 200 && res.data){
         return res.data;

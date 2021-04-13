@@ -25,7 +25,7 @@ const Index:React.FC<Props> = p => {
   const shouldBuyList = p.qdii.filter(el=>shouldBuy(el.score) > 0).sort((a,b)=>b.score.score - a.score.score);
   const shouldSellList = p.qdii.filter(el=>shouldBuy(el.score) < 0);
 
-  const line =   <Timeline style={{maxHeight: 200, overflow: "scroll"}}>
+  const line =   <Timeline>
     {shouldSellList.map(el=>{
         return(
         <Timeline.Item color="red" key={el.id}>
@@ -47,7 +47,7 @@ const Index:React.FC<Props> = p => {
 </Timeline>
   const column = React.useMemo(()=>getColumn(setCurrent), []);
   return <div className="panel">
-    <Table dataSource={p.qdii} columns={column} pagination={false} rowKey="id" scroll={{ x: 80 * column.length + 1, y: 400 }} 
+    <Table dataSource={p.qdii} columns={column} pagination={false} rowKey="id" scroll={{ y: 300 }} 
     onRow={(record) => {
       return {
         onClick: () => {setCurrent(record)}, // click row

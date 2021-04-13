@@ -80,7 +80,6 @@ export const getColumn:(onClick: Function)=>ColumnProps<any>[] = (onClick: Funct
     key: 'discount_rt',
     title: '估算溢价',
     width: 80,
-    fixed: 'right',
     render: (r)=>r.discount_rt
   },
 ];
