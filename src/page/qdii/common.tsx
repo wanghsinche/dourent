@@ -12,7 +12,7 @@ export const getColumn:(onClick: Function)=>ColumnProps<any>[] = (onClick: Funct
   {
     dataIndex: 'id',
     title: '代码',
-    width: 100,
+    width: 110,
     fixed: 'left',
     render: (v, r) => {
       const res = shouldBuy(r.score);

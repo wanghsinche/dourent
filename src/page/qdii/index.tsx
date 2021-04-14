@@ -47,7 +47,7 @@ const Index:React.FC<Props> = p => {
 </Timeline>
   const column = React.useMemo(()=>getColumn(setCurrent), []);
   return <div className="panel">
-    <Table dataSource={p.qdii} columns={column} pagination={false} rowKey="id" scroll={{ y: 300 }} 
+    <Table dataSource={p.qdii} columns={column} pagination={false} rowKey="id" scroll={{ y: 340 }} 
     onRow={(record) => {
       return {
         onClick: () => {setCurrent(record)}, // click row
