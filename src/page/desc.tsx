@@ -7,7 +7,7 @@ export default () => {
     </>;
     return <div>
         <Empty description={ii}></Empty>
-        <h2>相关文档下载：</h2>
+        <h3>相关文档下载：</h3>
         <ul>
             <li><a href="/download/2021-may-covid-sg.xlsx" download="2021-may-covid-sg.xlsx">2021-MAY-SG-covid数据</a></li>
         </ul>
