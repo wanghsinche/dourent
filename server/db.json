@@ -1,12 +1,11 @@
 {
-    "code": [
-        "asdjfakjl","kdgfoipgibv","idfjgoiwennkjd","jadlfjngan","sadpfuhadghfd"
-    ],
     "email": [
 
     ],
     "bindEmail": {
-        "asdjfakjl": "xxx@oo.com"
+        "asdjfakjl": ["xxx@oo.com"],
+        "kdgfoipgibv": [],
+        "idfjgoiwennkjd": []
     }
 }
 
